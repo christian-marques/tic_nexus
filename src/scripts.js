@@ -6,8 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const gameState = Array(9).fill(null).map(() => Array(9).fill(null));
     const mainBoardState = Array(9).fill(null);
 
-    console.log("DOM");
-
     function handleCellClick(event) {
         const cell = event.target;
         const boardIndex = cell.parentElement.dataset.board;
@@ -20,15 +18,20 @@ document.addEventListener("DOMContentLoaded", () => {
         // Update the cell
         gameState[boardIndex][cellIndex] = currentPlayer;
         cell.textContent = currentPlayer;
+        cell.classList.add(currentPlayer.toLowerCase());
 
         // Check for a win in the small board
         if (checkWin(gameState[boardIndex], currentPlayer)) {
             mainBoardState[boardIndex] = currentPlayer;
-            cell.parentElement.classList.add('finished');
+            const smallBoard = cell.parentElement;
+            smallBoard.classList.add('finished', currentPlayer.toLowerCase());
+            smallBoard.innerHTML = `<span class="${currentPlayer.toLowerCase()}">${currentPlayer}</span>`;
+            smallBoard.querySelector('span').style.fontSize = '80px';
         }
 
         // Check for a win in the main board
         if (checkWin(mainBoardState, currentPlayer)) {
+            highlightWinningSequence(mainBoardState, currentPlayer);
             alert(`${currentPlayer} wins the game!`);
             return;
         }
@@ -51,12 +54,28 @@ document.addEventListener("DOMContentLoaded", () => {
         return winPatterns.some(pattern => pattern.every(index => board[index] === player));
     }
 
+    function highlightWinningSequence(board, player) {
+        const winPatterns = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6]  // Diagonals
+        ];
+
+        winPatterns.forEach(pattern => {
+            if (pattern.every(index => board[index] === player)) {
+                pattern.forEach(index => {
+                    boards[index].classList.add('winner', player.toLowerCase());
+                });
+            }
+        });
+    }
+
     function updateBoardHighlight() {
         boards.forEach((board, index) => {
             if (nextBoard === null || nextBoard === index) {
-                board.classList.add('highlight');
+                board.classList.add('highlight', currentPlayer.toLowerCase());
             } else {
-                board.classList.remove('highlight');
+                board.classList.remove('highlight', 'x', 'o');
             }
         });
     }
@@ -64,6 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
     boards.forEach(board => {
         for (let i = 0; i < 9; i++) {
             const cell = document.createElement('div');
+            cell.classList.add('cell');
             cell.addEventListener('click', handleCellClick);
             board.appendChild(cell);
         }
