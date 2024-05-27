@@ -1,0 +1,16 @@
+{
+	"name": "tic-nexus",
+	"version": "1.0.0",
+	"description": "Jogo da velha mais avançado. Utiliza 9 mini-jogos para formar o principal com lógicas mais complexas, dando um ar novo ao jogo tradicional.",
+	"main": "src/server.js",
+	"scripts": {
+		"start": "node src/server.js"
+	},
+	"dependencies": {
+		"@capacitor/android": "^6.0.0",
+		"@capacitor/cli": "^6.0.0",
+		"@capacitor/core": "^6.0.0",
+		"capacitor": "^0.5.6",
+		"express": "^4.19.2"
+	}
+}

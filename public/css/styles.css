@@ -18,7 +18,7 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('../media/bkgd_white.png') no-repeat center center fixed;
+    background: url('../bkgd_white.png') no-repeat center center fixed;
     background-size: cover;
     filter: blur(2px); /* Ajuste o valor conforme necessário */
     z-index: -1;
