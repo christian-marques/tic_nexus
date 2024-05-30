@@ -1,39 +1,13 @@
-/* styles.css */
-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    position: relative;
-    overflow: hidden;
-}
-
-body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('../bkgd_white.png') no-repeat center center fixed;
-    background-size: cover;
-    filter: blur(2px); /* Ajuste o valor conforme necessário */
-    z-index: -1;
-}
-
 .header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
-    z-index: 1;
+    height: 20%; /* Ocupa 20% da altura da viewport */
+    justify-content: space-between; /* Espalha os itens uniformemente no espaço disponível */
 }
 
 .header h1 {
-    font-size: 3rem;
+    font-size: 1.5rem; /* Ajuste proporcional ao menor lado da viewport */
     margin: 0;
     color: #333;
 }
@@ -43,64 +17,76 @@ body::before {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    margin: 10px 0;
 }
 
 .player {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .player .icon {
-    font-size: 2rem;
+    font-size: 1.2rem; /* Ajuste proporcional ao menor lado da viewport */
     margin-right: 10px;
 }
 
 .player input {
-    width: 90%;
+    width: 70%;
     padding: 1%;
     margin-right: 10px;
 }
 
 .player .score {
-    font-size: 2rem;
+    font-size: 1.2rem; /* Ajuste proporcional ao menor lado da viewport */
 }
 
 .controls {
-    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5px; /* Adiciona espaço acima dos botões */
 }
 
 .controls button {
-    padding: 10px 20px;
-    margin: 5px;
-    font-size: 1rem;
+    padding: 4px 8px; /* Ajuste proporcional ao menor lado da viewport */
+    margin: 3px;
+    font-size: 0.7rem; /* Ajuste proporcional ao menor lado da viewport */
     cursor: pointer;
     border: none;
     border-radius: 5px;
-    background-color: #767677; /* Verde claro */
+    background-color: #767677;
     color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s, transform 0.3s;
 }
 
 .controls button:hover {
-    background-color: #3b3b3b; /* Verde um pouco mais escuro */
+    background-color: #3b3b3b;
     transform: scale(1.05);
 }
 
 .controls button:active {
-    background-color: #000000; /* Verde ainda mais escuro */
+    background-color: #000000;
+}
+
+.game-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 80%; /* Ocupa 80% da altura da viewport */
 }
 
 .game-board {
-    display: flex;
     background: rgba(255, 255, 255, 0.9);
-    padding: 1%;
     border-radius: 10px;
     width: 70vmin; /* 70% do menor lado da viewport */
     height: 70vmin; /* 70% do menor lado da viewport */
+    padding: 1%;
     box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .big-board {
@@ -118,12 +104,11 @@ body::before {
     grid-template-rows: repeat(3, 1fr);
     background-color: #fff;
     border: 2px solid #000;
-    width: 100%;
-    height: 100%;
     position: relative;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s, background-color 0.3s;
+    aspect-ratio: 1 / 1; /* Garantir que os pequenos tabuleiros sejam quadrados */
 }
 
 .small-board:hover {
@@ -135,9 +120,10 @@ body::before {
     justify-content: center;
     align-items: center;
     border: 1px solid #ccc;
-    font-size: 2.5vmin; /* Ajuste proporcional ao menor lado da viewport */
+    font-size: 1.8vmin; /* Ajuste proporcional ao menor lado da viewport */
     cursor: pointer;
     transition: background-color 0.3s;
+    aspect-ratio: 1 / 1; /* Garantir que as células sejam quadradas */
 }
 
 .highlight.x {
@@ -167,12 +153,12 @@ body::before {
 }
 
 .finished.x {
-    font-size: 5vmin; /* Ajuste proporcional ao menor lado da viewport */
+    font-size: 3.5vmin; /* Ajuste proporcional ao menor lado da viewport */
     color: red;
 }
 
 .finished.o {
-    font-size: 5vmin; /* Ajuste proporcional ao menor lado da viewport */
+    font-size: 3.5vmin; /* Ajuste proporcional ao menor lado da viewport */
     color: blue;
 }
 
