@@ -195,3 +195,8 @@ body::before {
 .winner.o {
     background-color: rgba(0, 0, 255, 0.2); /* Light blue for O */
 }
+
+.disabled {
+    pointer-events: none; /* Desativa a interação com o mouse */
+    opacity: 0.5; /* Escurece os mini jogos */
+}

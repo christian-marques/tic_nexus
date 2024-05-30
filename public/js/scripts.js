@@ -68,10 +68,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateBoardHighlight() {
         boards.forEach((board, index) => {
-            if (nextBoard === null || nextBoard === index) {
+            if ((nextBoard === null || nextBoard === index) && (mainBoardState[index] === null)) {
                 board.classList.add('highlight', currentPlayer.toLowerCase());
+                board.classList.remove('disabled');
             } else {
                 board.classList.remove('highlight');
+                board.classList.add('disabled');
             }
 
             // Remover as classes de highlight do jogador anterior
