@@ -71,7 +71,14 @@ document.addEventListener("DOMContentLoaded", () => {
             if (nextBoard === null || nextBoard === index) {
                 board.classList.add('highlight', currentPlayer.toLowerCase());
             } else {
-                board.classList.remove('highlight', 'x', 'o');
+                board.classList.remove('highlight');
+            }
+
+            // Remover as classes de highlight do jogador anterior
+            if (currentPlayer === 'X') {
+                board.classList.remove('o');
+            } else {
+                board.classList.remove('x');
             }
         });
     }
@@ -85,6 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('scoreO').textContent = scoreO;
         }
     }
+
     function resetScore(){
         scoreX = 0;
         scoreO = 0;
