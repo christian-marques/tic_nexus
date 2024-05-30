@@ -39,7 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // Check for a win in the main board
         if (checkWin(mainBoardState, currentPlayer)) {
             highlightWinningSequence(mainBoardState, currentPlayer);
+
             alert(`${currentPlayer} wins the game!`);
+            
             updateScore(currentPlayer);
             return;
         }

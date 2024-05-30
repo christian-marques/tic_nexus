@@ -167,12 +167,12 @@ body::before {
 }
 
 .finished.x {
-    font-size: 6vmin; /* Ajuste proporcional ao menor lado da viewport */
+    font-size: 5vmin; /* Ajuste proporcional ao menor lado da viewport */
     color: red;
 }
 
 .finished.o {
-    font-size: 6vmin; /* Ajuste proporcional ao menor lado da viewport */
+    font-size: 5vmin; /* Ajuste proporcional ao menor lado da viewport */
     color: blue;
 }
 
@@ -198,5 +198,5 @@ body::before {
 
 .disabled {
     pointer-events: none; /* Desativa a interação com o mouse */
-    opacity: 0.5; /* Escurece os mini jogos */
+    opacity: 0.7; /* Escurece os mini jogos */
 }
