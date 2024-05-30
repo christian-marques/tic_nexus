@@ -128,9 +128,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function showWinnerModal(player) {
-        const playerXName = document.getElementById('playerX').value || "Player 1";
-        const playerOName = document.getElementById('playerO').value || "Player 2";
-        winnerMessage.textContent = `${player} venceu o jogo!`;
+        const playerXName = document.getElementById('playerX').value; //|| "Player 1";
+        const playerOName = document.getElementById('playerO').value; //|| "Player 2";
+        const winPlayerName = player === 'X' ? playerXName : playerOName;
+        winnerMessage.textContent = `${winPlayerName} venceu o jogo!`;
         modalPlayerXName.textContent = playerXName;
         modalScoreX.textContent = scoreX;
         modalPlayerOName.textContent = playerOName;
