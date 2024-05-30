@@ -200,3 +200,99 @@ body::before {
     pointer-events: none; /* Desativa a interação com o mouse */
     opacity: 0.7; /* Escurece os mini jogos */
 }
+
+/* Modal container */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.5s;
+}
+
+/* Modal container */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.5s;
+}
+
+/* Modal content */
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+    border-radius: 10px;
+    animation: slideIn 0.5s;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Close button */
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Winner message */
+#winnerMessage {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+/* Player scores */
+.scoreboard {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.player-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.player-score .icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.player-score div {
+    font-size: 1.2rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes slideIn {
+    from {transform: translateY(-50px);}
+    to {transform: translateY(0);}
+}

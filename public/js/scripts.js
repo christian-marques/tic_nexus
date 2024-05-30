@@ -1,6 +1,13 @@
 // scripts.js
 document.addEventListener("DOMContentLoaded", () => {
     const boards = document.querySelectorAll(".small-board");
+    const winnerModal = document.getElementById("winnerModal");
+    const closeModalButton = document.getElementById("closeModal");
+    const winnerMessage = document.getElementById("winnerMessage");
+    const modalPlayerXName = document.getElementById("modalPlayerXName");
+    const modalScoreX = document.getElementById("modalScoreX");
+    const modalPlayerOName = document.getElementById("modalPlayerOName");
+    const modalScoreO = document.getElementById("modalScoreO");
     let currentPlayer = 'X';
     let nextBoard = null;
     let scoreX = 0;
@@ -39,10 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Check for a win in the main board
         if (checkWin(mainBoardState, currentPlayer)) {
             highlightWinningSequence(mainBoardState, currentPlayer);
-
-            alert(`${currentPlayer} wins the game!`);
-            
             updateScore(currentPlayer);
+            showWinnerModal(currentPlayer);
             return;
         }
 
@@ -70,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateBoardHighlight() {
         boards.forEach((board, index) => {
-            if ((nextBoard === null || nextBoard === index) && (mainBoardState[index] === null)) {
+            if ((nextBoard === null || nextBoard === index) && mainBoardState[index] === null) {
                 board.classList.add('highlight', currentPlayer.toLowerCase());
                 board.classList.remove('disabled');
             } else {
@@ -121,6 +126,28 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         updateBoardHighlight();
     }
+
+    function showWinnerModal(player) {
+        const playerXName = document.getElementById('playerX').value || "Player 1";
+        const playerOName = document.getElementById('playerO').value || "Player 2";
+        winnerMessage.textContent = `${player} venceu o jogo!`;
+        modalPlayerXName.textContent = playerXName;
+        modalScoreX.textContent = scoreX;
+        modalPlayerOName.textContent = playerOName;
+        modalScoreO.textContent = scoreO;
+        winnerModal.style.display = "block";
+    }
+
+    function closeModal() {
+        winnerModal.style.display = "none";
+    }
+
+    closeModalButton.addEventListener('click', closeModal);
+    window.addEventListener('click', (event) => {
+        if (event.target == winnerModal) {
+            closeModal();
+        }
+    });
 
     document.getElementById('startGame').addEventListener('click', () => {
         resetGame();
