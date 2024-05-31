@@ -20,6 +20,27 @@ document.addEventListener("DOMContentLoaded", () => {
         [0, 4, 8], [2, 4, 6]  // Diagonals
     ];
 
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const gameContainer = document.querySelector('.game-container');
+
+    if (isMobile) {
+        document.body.classList.add('mobile');
+        document.body.classList.remove('web');
+    } else {
+        document.body.classList.add('web');
+        document.body.classList.remove('mobile');
+    }
+    window.addEventListener('resize', () => {
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+            document.body.classList.add('mobile');
+            document.body.classList.remove('web');
+        } else {
+            document.body.classList.add('web');
+            document.body.classList.remove('mobile');
+        }
+    });
+
     function handleCellClick(event) {
         const cell = event.target;
         const boardIndex = cell.parentElement.dataset.board;
@@ -47,7 +68,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (checkWin(mainBoardState, currentPlayer)) {
             highlightWinningSequence(mainBoardState, currentPlayer);
             updateScore(currentPlayer);
-            showWinnerModal(currentPlayer);
+            // Mostrar a janela de vitoria apos 2 segundos
+            setTimeout(() => {
+                showWinnerModal(currentPlayer);
+            }, 2000); // 2000 milliseconds = 2 seconds
             return;
         }
 
@@ -128,8 +152,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function showWinnerModal(player) {
-        const playerXName = document.getElementById('playerX').value; //|| "Player 1";
-        const playerOName = document.getElementById('playerO').value; //|| "Player 2";
+        const playerXName = document.getElementById('playerX').value === "" ? "Jogador 1" : document.getElementById('playerX').value;
+        const playerOName = document.getElementById('playerO').value === "" ? "Jogador 2" : document.getElementById('playerO').value;
         const winPlayerName = player === 'X' ? playerXName : playerOName;
         winnerMessage.textContent = `${winPlayerName} venceu o jogo!`;
         modalPlayerXName.textContent = playerXName;

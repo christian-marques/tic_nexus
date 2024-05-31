@@ -7,9 +7,14 @@
 }
 
 .header h1 {
-    font-size: 1.5rem; /* Ajuste proporcional ao menor lado da viewport */
-    margin: 0;
-    color: #333;
+    font-size: 2rem; /* Ajuste proporcional ao menor lado da viewport */
+    margin: 0 0; /* Margem vertical pequena */
+    text-align: center; /* Centraliza o texto */
+    background-color: black; /* Tarja preta */
+    color: white; /* Texto branco */
+    width: 100%; /* Ocupa toda a largura da tela */
+    padding: 0 0; /* Padding superior e inferior */
+    box-sizing: border-box; /* Inclui o padding no tamanho total */
 }
 
 .scoreboard {
@@ -120,7 +125,8 @@
     justify-content: center;
     align-items: center;
     border: 1px solid #ccc;
-    font-size: 1.8vmin; /* Ajuste proporcional ao menor lado da viewport */
+    font-size: 3.5vmin; /* Ajuste proporcional ao menor lado da viewport */
+    font-weight: bold; /* Deixa o texto em negrito */
     cursor: pointer;
     transition: background-color 0.3s;
     aspect-ratio: 1 / 1; /* Garantir que as células sejam quadradas */
@@ -184,7 +190,7 @@
 
 .disabled {
     pointer-events: none; /* Desativa a interação com o mouse */
-    opacity: 0.7; /* Escurece os mini jogos */
+    opacity: 0.9; /* Escurece os demais mini jogos */
 }
 
 /* Modal container */
@@ -204,7 +210,7 @@
 /* Modal content */
 .modal-content {
     background-color: #fff;
-    margin: 10% auto;
+    margin: 20% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
@@ -270,4 +276,118 @@
 @keyframes slideIn {
     from {transform: translateY(-50px);}
     to {transform: translateY(0);}
+}
+
+/* Estilos para o os mini jogos no mobile */
+body.mobile .game-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 80%; /* Ocupa 80% da altura da viewport */
+    margin-top: 30%; /* Adicionado para espaço no topo */
+}
+
+body.mobile .game-board {
+    width: 90vw; /* 90% da largura da viewport para um ajuste melhor */
+    height: auto; /* Altura automática para manter a proporção */
+    max-height: 80vh; /* Limite máximo da altura, deixando espaço para o cabeçalho */
+    margin: auto; /* Centraliza o tabuleiro */
+}
+
+body.web .game-board {
+    width: 70vmin; /* 70% do menor lado da viewport */
+    height: 70vmin; /* 70% do menor lado da viewport */
+}
+
+body.mobile .small-board {
+    font-size: 3vw; /* Ajuste proporcional ao menor lado da viewport */
+}
+
+body.web .small-board {
+    font-size: 1.8vmin; /* Ajuste proporcional ao menor lado da viewport */
+}
+
+body.mobile .finished.x, body.mobile .finished.o {
+    font-size: 5vw; /* Ajuste proporcional ao menor lado da viewport */
+}
+
+body.web .finished.x, body.web .finished.o {
+    font-size: 3.5vmin; /* Ajuste proporcional ao menor lado da viewport */
+}
+
+/* Estilos para o cabeçalho no mobile */
+body.mobile .header {
+    width: 100%; /* Ocupa 100% da largura da tela */
+    padding: 1%; /* Adiciona um pouco de espaçamento interno */
+    box-sizing: border-box; /* Inclui o padding no tamanho total */
+}
+
+body.mobile .header h1 {
+    font-size: 7vw; /* Tamanho da fonte baseado na largura da viewport */
+    margin: 2vw 0; /* Margem vertical pequena */
+    text-align: center; /* Centraliza o texto */
+}
+
+body.mobile .scoreboard {
+    width: 100%; /* Ocupa 100% da largura da tela */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1%;
+    box-sizing: border-box; /* Inclui o padding no tamanho total */
+}
+
+body.mobile .player {
+    width: 90%; /* Largura relativa para ajustar ao espaço disponível */
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Espaço igual entre os elementos */
+    margin-bottom: 1vw; /* Margem inferior pequena */
+}
+
+body.mobile .player .icon {
+    font-size: 6vw; /* Tamanho da fonte baseado na largura da viewport */
+    margin-right: 2vw; /* Espaço entre o ícone e o input */
+}
+
+body.mobile .player input {
+    flex: 1; /* Faz o input crescer para preencher o espaço */
+    padding: 0.5vw; /* Padding pequeno */
+    font-size: 6vw; /* Tamanho da fonte baseado na largura da viewport */
+    margin-right: 2vw; /* Espaço entre o input e o placar */
+}
+
+body.mobile .player .score {
+    font-size: 6vw; /* Tamanho da fonte baseado na largura da viewport */
+}
+
+body.mobile .controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1vw; /* Margem superior pequena */
+}
+
+body.mobile .controls button {
+    padding: 2vw 4vw; /* Padding baseado na largura da viewport */
+    margin: 1vw;
+    font-size: 5vw; /* Tamanho da fonte baseado na largura da viewport */
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #767677;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+body.mobile .controls button:hover {
+    background-color: #3b3b3b;
+    transform: scale(1.05);
+}
+
+body.mobile .controls button:active {
+    background-color: #000000;
 }
