@@ -278,6 +278,11 @@
     to {transform: translateY(0);}
 }
 
+body{
+    margin: 0;
+    padding-bottom: 50px; /* Espaço reservado para o banner */
+}
+
 /* Estilos para o os mini jogos no mobile */
 body.mobile .game-container {
     display: flex;

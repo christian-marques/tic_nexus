@@ -1,6 +1,72 @@
+// Importa o AdMob do plugin Capacitor
+import { AdMob } from './node_modules/@capacitor-community/admob/dist/esm/index.js'; // Certifique-se do caminho correto!
+
+document.addEventListener('deviceready', async () => {
+    try {
+        await AdMob.initialize({
+            appId: 'ca-app-pub-3940256099942544~3347511713', // Substitua pelo seu App ID
+        });
+        console.log('AdMob initialized successfully');
+
+        await AdMob.showBanner({
+            adId: 'ca-app-pub-3940256099942544/6300978111',
+            position: 'BOTTOM_CENTER',
+            size: 'SMART_BANNER',
+        });
+        console.log('Banner displayed successfully');
+    } catch (error) {
+        console.error('AdMob setup failed:', error);
+    }
+});
+
+
+
+// import { AdMob } from '@capacitor-community/admob';
+// // const { AdMob } = require('@capacitor-community/admob');
+
+// document.addEventListener("DOMContentLoaded", async () => {
+//     try {
+//         // Solicita permissões necessárias
+//         const result = await Permissions.query({ name: 'network' });
+//         if (result.state !== 'granted') {
+//             console.warn('Permissões de rede não concedidas!');
+//         }
+//     } catch (error) {
+//         console.error('Erro ao solicitar permissões:', error);
+//     }
+
+//     try {
+//         // Inicializar o AdMob com o ID de teste
+//         await AdMob.initialize({
+//             appId: 'ca-app-pub-3940256099942544~3347511713', // ID de teste
+//         });
+
+//         console.log('AdMob inicializado com sucesso!');
+
+//         // Exibir um banner de teste
+//         await AdMob.showBanner({
+//             adId: 'ca-app-pub-3940256099942544/6300978111', // ID de banner de teste
+//             position: 'BOTTOM',
+//         });
+//         console.log('Banner exibido com sucesso!');
+
+//         // Exibir um intersticial de teste (opcional)
+//         // await AdMob.prepareInterstitialAd({
+//         //     adId: 'ca-app-pub-3940256099942544/1033173712', // ID de intersticial de teste
+//         //     reloadOnDismiss: true,
+//         // });
+//         // await AdMob.showInterstitialAd();
+//         // console.log('Intersticial exibido com sucesso!');
+//     } catch (error) {
+//         console.error('Erro ao inicializar ou exibir anúncios:', error);
+//     }
+// });
+
+
 // scripts.js
 document.addEventListener("DOMContentLoaded", () => {
     const boards = document.querySelectorAll(".small-board");
+    console.log("Tabuleiros encontrados:", boards.length); // Quantidade de tabuleiros
     const winnerModal = document.getElementById("winnerModal");
     const closeModalButton = document.getElementById("closeModal");
     const winnerMessage = document.getElementById("winnerMessage");
@@ -42,8 +108,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function handleCellClick(event) {
+        console.log("Célula clicada:", event.target);
         const cell = event.target;
         const boardIndex = cell.parentElement.dataset.board;
+        console.log("Tabuleiro clicado:", boardIndex);
         const cellIndex = Array.from(cell.parentElement.children).indexOf(cell);
 
         if (gameState[boardIndex][cellIndex] !== null || mainBoardState[boardIndex] !== null) {
@@ -144,6 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
             for (let i = 0; i < 9; i++) {
                 const cell = document.createElement('div');
                 cell.classList.add('cell');
+                console.log(`Criando célula ${i} no tabuleiro:`, board);
                 cell.addEventListener('click', handleCellClick);
                 board.appendChild(cell);
             }
