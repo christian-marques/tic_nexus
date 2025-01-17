@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tic_nexus/pages/game.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   runApp(const MyApp());
 }
 
@@ -12,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false, // Remove o ícone de "DEBBUG"
-      home: const GamePage()
+      home: GamePage()
     );
   }
 }
