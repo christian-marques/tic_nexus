@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 class GameLogic {
@@ -10,9 +12,17 @@ class GameLogic {
   // Callback para notificações de mudança de estado.
   VoidCallback? _onStateChanged;
 
+  // Callback para notificar vitória ou empate.
+  Function(String)? onWinnerDeclared;
+
   // Configura o callback para mudanças de estado.
   void setOnStateChanged(VoidCallback callback) {
     _onStateChanged = callback;
+  }
+
+  // Configura o callback para notificações de vitória ou empate.
+  void setOnWinnerDeclared(Function(String) callback) {
+    onWinnerDeclared = callback;
   }
 
   // Método chamado ao clicar em uma célula.
@@ -22,8 +32,15 @@ class GameLogic {
     // Atualiza o estado da célula com o jogador atual.
     _board[index] = _currentPlayer;
 
-    // Alterna entre X e O.
-    _currentPlayer = (_currentPlayer == 'X') ? 'O' : 'X';
+    // Verifica se há vitória ou empate após o movimento.
+    if (checkVictory()) {
+      onWinnerDeclared?.call(_currentPlayer); // Notifica o jogador vencedor.
+    } else if (checkDraw()) {
+      onWinnerDeclared?.call('-'); // Notifica empate.
+    } else {
+      // Alterna entre X e O.
+      _currentPlayer = (_currentPlayer == 'X') ? 'O' : 'X';
+    }
 
     // Notifica a mudança de estado.
     _onStateChanged?.call();
@@ -67,6 +84,7 @@ class GameLogic {
       if (_board[pattern[0]] != '' &&
           _board[pattern[0]] == _board[pattern[1]] &&
           _board[pattern[0]] == _board[pattern[2]]) {
+        log(">>>>>>>>>> VITÓRIAAAA!!", name: "DEVELOPER");
         return true;
       }
     }
@@ -75,7 +93,11 @@ class GameLogic {
 
   // Verifica empate.
   bool checkDraw() {
-    return _board.every((cell) => cell.isNotEmpty) && !checkVictory();
+    if (_board.every((cell) => cell.isNotEmpty) && !checkVictory()){
+      log(">>>>>>>>>> EMPATE!!", name: "DEVELOPER");
+      return true;
+    }
+    return false;
   }
 
   // Reseta o tabuleiro para um novo jogo.

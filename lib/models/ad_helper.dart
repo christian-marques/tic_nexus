@@ -17,11 +17,11 @@ class AdHelper {
       request: const AdRequest(),
       listener: BannerAdListener(
         onAdLoaded: (ad) {
-          log("Banner Ad carregado com sucesso.");
+          log("Banner Ad carregado com sucesso.", name: "DEVELOPER");
           onBannerLoaded(ad as BannerAd);
         },
         onAdFailedToLoad: (ad, error) {
-          log("Falha ao carregar o Banner Ad: ${error.message}");
+          log("Falha ao carregar o Banner Ad: ${error.message}", name: "DEVELOPER");
           ad.dispose();
           onBannerLoaded(null);
         },
@@ -36,24 +36,24 @@ class AdHelper {
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {
-          log("Interstitial Ad carregado com sucesso.");
+          log("Interstitial Ad carregado com sucesso.", name: "DEVELOPER");
           _interstitialAd = ad;
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
-              log("Interstitial Ad fechado.");
+              log("Interstitial Ad fechado.", name: "DEVELOPER");
               ad.dispose();
               _interstitialAd = null; // Limpa o recurso
               loadInterstitialAd(onInterstitialLoaded); // Recarrega o anúncio
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
-              log("Erro ao exibir Interstitial Ad: ${error.message}");
+              log("Erro ao exibir Interstitial Ad: ${error.message}", name: "DEVELOPER");
               ad.dispose();
             },
           );
           onInterstitialLoaded(ad);
         },
         onAdFailedToLoad: (LoadAdError error) {
-          log("Falha ao carregar Interstitial Ad: ${error.message}");
+          log("Falha ao carregar Interstitial Ad: ${error.message}", name: "DEVELOPER");
           onInterstitialLoaded(null);
         },
       ),
@@ -66,7 +66,7 @@ class AdHelper {
       _interstitialAd!.show();
       _interstitialAd = null; // Limpa após exibir
     } else {
-      log("Nenhum Interstitial Ad carregado.");
+      log("Nenhum Interstitial Ad carregado.", name: "DEVELOPER");
     }
   }
 

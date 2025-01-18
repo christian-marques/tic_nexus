@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:tic_nexus/models/ad_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:tic_nexus/models/score_board.dart';
@@ -17,10 +19,10 @@ class _GamePageState extends State<GamePage> {
   final GameLogic _gameLogic = GameLogic();
   BannerAd? _bannerAd;
 
-  int _scoreX = 0;
-  int _scoreO = 0;
-  bool _gameEnded = false;
-  String _winnerSymbol = '';
+  static int scoreX = 0;
+  static int scoreO = 0;
+  static String nameX = 'Jogador X'; 
+  static String nameO = 'Jogador O'; 
 
   @override
   void initState() {
@@ -38,23 +40,24 @@ class _GamePageState extends State<GamePage> {
       setState(() {}); // Atualiza o estado para habilitar o botão
     });
 
-    _gameLogic.setOnStateChanged(() {
+    _gameLogic.onWinnerDeclared = (winnerSymbol) {
+      String winnerName = '';
       setState(() {
-        if (_gameLogic.checkVictory()) {
-          _gameEnded = true;
-          _winnerSymbol = _gameLogic.getCurrentPlayer() == 'X' ? 'O' : 'X';
-
-          if (_winnerSymbol == 'X') {
-            _scoreX++;
-          } else if (_winnerSymbol == 'O') {
-            _scoreO++;
-          }
-        } else if (_gameLogic.checkDraw()) {
-          _gameEnded = true;
-          _winnerSymbol = '-'; // Empate.
+        log(">>>>>>> O VENCEDOR FOI: '$winnerSymbol'", name: "DEVELOPER");
+        if (winnerSymbol == "X"){
+          scoreX++;
+          winnerName = nameX;
+          log(">>>>>>> Score X: '$scoreX'", name: "DEVELOPER");
+        }
+        else if (winnerSymbol == "O"){
+          scoreO++;
+          winnerName = nameO;
+          log(">>>>>>> Score O: '$scoreO'", name: "DEVELOPER");
         }
       });
-    });
+      // Exibe o diálogo após atualização
+      _showWinnerDialog(winnerSymbol, winnerName);
+    };
   }
 
   @override
@@ -63,13 +66,48 @@ class _GamePageState extends State<GamePage> {
     super.dispose();
   }
 
-  void _resetGame() {
+  void _resetBoard() {
     setState(() {
-      _gameEnded = false;
-      _winnerSymbol = '';
-      _gameLogic.resetBoard();
+      _gameLogic.resetBoard(); // Apenas reseta o tabuleiro.
     });
   }
+
+  void _resetGame(){
+    _resetBoard();
+    scoreX = 0;
+    scoreO = 0;
+    nameX = "Jogador X";
+    nameO = "Jogador O";
+  }
+
+  void _showWinnerDialog(String winnerSymbol, String winnerName) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Impede fechar clicando fora do diálogo
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            winnerSymbol == '-' ? "Empate!" : "Parabéns, $winnerName!"),
+          content: Text(
+            winnerSymbol == '-' ? 
+              """$nameX e $nameO,\njogaram muito bem!""" : 
+              """O $winnerSymbol venceu!""",
+            style: const TextStyle(fontSize: 18.0),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Fecha o diálogo
+                _resetBoard(); // Reseta o tabuleiro automaticamente
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -99,16 +137,16 @@ class _GamePageState extends State<GamePage> {
                     PlayerSection(
                       icon: Icons.close,
                       labelName: "Jogador X",
-                      initialName: "Jogador X",
-                      score: _scoreX,
+                      initialName: nameX,
+                      score: scoreX, // Placar inicial fixo.
                       iconColor: Colors.red,
                       backgroundColor: const Color(0xFFFFCDD2),
                     ),
                     PlayerSection(
                       icon: Icons.circle_outlined,
                       labelName: "Jogador O",
-                      initialName: "Jogador O",
-                      score: _scoreO,
+                      initialName: nameO,
+                      score: scoreO, // Placar inicial fixo.
                       iconColor: Colors.blue,
                       backgroundColor: const Color(0xFFBBDEFB),
                     ),
@@ -116,45 +154,20 @@ class _GamePageState extends State<GamePage> {
                 ),
                 Expanded(
                   child: Center(
-                    child: _gameEnded
-                        ? Container(
-                            alignment: Alignment.center,
-                            color: Colors.grey.shade300,
-                            child: Text(
-                              _winnerSymbol == '-'
-                                  ? "Empate!"
-                                  : _winnerSymbol,
-                              style: TextStyle(
-                                fontSize: 48.0,
-                                fontWeight: FontWeight.bold,
-                                color: _winnerSymbol == 'X'
-                                    ? Colors.red
-                                    : _winnerSymbol == 'O'
-                                        ? Colors.blue
-                                        : Colors.black,
-                              ),
-                            ),
-                          )
-                        : GameTable(gameLogic: _gameLogic),
+                    child: GameTable(gameLogic: _gameLogic), // Apenas exibe o tabuleiro.
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 32.0),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 32.0), // Ajusta o espaçamento geral
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween, // Espaço igual entre os botões
                     children: [
                       ElevatedButton(
-                        onPressed: _resetGame, // Reseta apenas o tabuleiro.
+                        onPressed: _resetBoard, // Reseta apenas o tabuleiro.
                         child: const Text('Próxima Partida'),
                       ),
                       ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _scoreX = 0;
-                            _scoreO = 0; // Reseta o placar.
-                            _resetGame();
-                          });
-                        },
+                        onPressed: _resetGame, // Reseta o jogo e o placar.
                         child: const Text('Reset'),
                       ),
                     ],
