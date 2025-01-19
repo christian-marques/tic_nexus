@@ -111,9 +111,14 @@ class _GamePageState extends State<GamePage> {
       context: context,
       title: winnerSymbol == '-' ? "Empate!" : "Parabéns, $winnerName!",
       body: body,
-      onConfirmed: _gameLogic.resetBoard,
+      onConfirmed: (){
+        _gameLogic.resetBoard(); // Reinicia o tabuleiro
+        _gameLogic.startGame();  // Recomeça o jogo automaticamente
+        setState(() {
+          isEditingNames = false;  // Evita edição de nomes após reinício
+        });
+      }
     ).show();
-    _gameLogic.startGame();
   }
 
   @override
