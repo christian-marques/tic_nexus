@@ -10,9 +10,11 @@ class ScoreBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Container(
-      padding: const EdgeInsets.all(16.0),
-      margin: const EdgeInsets.only(bottom: 20),
+      padding: EdgeInsets.all(screenHeight * 0.02), // Espaçamento proporcional
+      margin: EdgeInsets.only(bottom: screenHeight * 0.02),
       decoration: BoxDecoration(
         color: Colors.white60,
         border: Border.all(
@@ -38,7 +40,7 @@ class ScoreBoard extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: screenHeight * 0.02), // Espaçamento proporcional
           ...players,
         ],
       ),
@@ -68,20 +70,22 @@ class PlayerSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     final TextEditingController controller = TextEditingController(text: initialName);
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
+      padding: EdgeInsets.only(bottom: screenWidth * 0.02), // Espaçamento proporcional
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Ícone do Jogador
           Icon(
             icon,
-            size: 32,
+            size: screenWidth * 0.08, // Tamanho proporcional ao dispositivo
             color: iconColor,
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: screenWidth * 0.02),
 
           // Nome do jogador e TextField
           Expanded(
@@ -92,14 +96,13 @@ class PlayerSection extends StatelessWidget {
                 border: OutlineInputBorder(),
               ),
               onSubmitted: onNameChanged, // Chama o callback ao finalizar a edição
-              // onEditingComplete: onNameChanged,
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: screenWidth * 0.02),
 
           // Bloco do Placar
           Container(
-            padding: const EdgeInsets.all(6),
+            padding: EdgeInsets.all(screenWidth * 0.02),
             decoration: BoxDecoration(
               color: backgroundColor,
               borderRadius: BorderRadius.circular(8),
@@ -107,7 +110,7 @@ class PlayerSection extends StatelessWidget {
             child: Text(
               score.toString(),
               style: TextStyle(
-                fontSize: 20,
+                fontSize: screenWidth * 0.05,
                 fontWeight: FontWeight.bold,
                 color: iconColor,
               ),

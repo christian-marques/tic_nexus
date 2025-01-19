@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:tic_nexus/models/ad_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:tic_nexus/models/icon_button.dart';
@@ -29,34 +28,27 @@ class _GamePageState extends State<GamePage> {
   void initState() {
     super.initState();
 
-    // Carregar Banner Ad
     _adHelper.loadBannerAd((banner) {
       setState(() {
         _bannerAd = banner;
       });
     });
 
-    // Carregar Interstitial Ad
     _adHelper.loadInterstitialAd((interstitial) {
-      setState(() {}); // Atualiza o estado para habilitar o botão
+      setState(() {});
     });
 
     _gameLogic.onWinnerDeclared = (winnerSymbol) {
       String winnerName = '';
       setState(() {
-        log(">>>>>>> O VENCEDOR FOI: '$winnerSymbol'", name: "DEVELOPER");
-        if (winnerSymbol == "X"){
+        if (winnerSymbol == "X") {
           scoreX++;
           winnerName = nameX;
-          log(">>>>>>> Score X: '$scoreX'", name: "DEVELOPER");
-        }
-        else if (winnerSymbol == "O"){
+        } else if (winnerSymbol == "O") {
           scoreO++;
           winnerName = nameO;
-          log(">>>>>>> Score O: '$scoreO'", name: "DEVELOPER");
         }
       });
-      // Exibe o diálogo após atualização
       _showWinnerDialog(winnerSymbol, winnerName);
     };
   }
@@ -69,11 +61,11 @@ class _GamePageState extends State<GamePage> {
 
   void _resetBoard() {
     setState(() {
-      _gameLogic.resetBoard(); // Apenas reseta o tabuleiro.
+      _gameLogic.resetBoard();
     });
   }
 
-  void _resetGame(){
+  void _resetGame() {
     _resetBoard();
     scoreX = 0;
     scoreO = 0;
@@ -81,157 +73,152 @@ class _GamePageState extends State<GamePage> {
     nameO = "Jogador O";
   }
 
-  void _showAdsense(){
+  void _showAdsense() {
     _adHelper.showInterstitialAd();
   }
 
- void _showWinnerDialog(String winnerSymbol, String winnerName) {
-  showDialog(
-    context: context,
-    barrierDismissible: false, // Impede fechar clicando fora do diálogo
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(
-          winnerSymbol == '-' ? "Empate!" : "Parabéns, $winnerName!",
-        ),
-        content: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            style: const TextStyle(fontSize: 18.0, color: Colors.black),
-            children: winnerSymbol == '-'
-                ? [
-                    TextSpan(
-                      text: "$nameX e $nameO,\n",
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const TextSpan(text: "jogaram muito bem!"),
-                  ]
-                : [
-                    const TextSpan(text: "O "),
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: Icon(
-                        winnerSymbol == 'X' ? Icons.close : Icons.circle_outlined,
-                        size: 24.0,
-                        color: winnerSymbol == 'X' ? Colors.red : Colors.blue,
+  void _showWinnerDialog(String winnerSymbol, String winnerName) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            winnerSymbol == '-' ? "Empate!" : "Parabéns, $winnerName!",
+          ),
+          content: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: const TextStyle(fontSize: 18.0, color: Colors.black),
+              children: winnerSymbol == '-'
+                  ? [
+                      TextSpan(
+                        text: "$nameX e $nameO,\n",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                    ),
-                    const TextSpan(text: " venceu!"),
-                  ],
+                      const TextSpan(text: "jogaram muito bem!"),
+                    ]
+                  : [
+                      const TextSpan(text: "O "),
+                      WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: Icon(
+                          winnerSymbol == 'X' ? Icons.close : Icons.circle_outlined,
+                          size: 24.0,
+                          color: winnerSymbol == 'X' ? Colors.red : Colors.blue,
+                        ),
+                      ),
+                      const TextSpan(text: " venceu!"),
+                    ],
+            ),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Fecha o diálogo
-              _resetBoard(); // Reseta o tabuleiro automaticamente
-            },
-            child: const Text("OK"),
-          ),
-        ],
-      );
-    },
-  );
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _resetBoard();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
-    const double titleFontSize = 25;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
           "TIC NEXUS",
-          style: TextStyle(fontSize: titleFontSize),
+          style: TextStyle(fontSize: 25),
         ),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        toolbarHeight: (titleFontSize + 5),
+        toolbarHeight: screenHeight * 0.04,
       ),
-body: Column(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  crossAxisAlignment: CrossAxisAlignment.stretch,
-  children: [
-    // Placar
-    ScoreBoard(
-      players: [
-        PlayerSection(
-          icon: Icons.close,
-          labelName: "Jogador X",
-          initialName: nameX,
-          score: scoreX,
-          iconColor: Colors.red,
-          backgroundColor: const Color(0xFFFFCDD2),
-          onNameChanged: (newName) {
-            setState(() {
-              nameX = newName;
-            });
-          },
-        ),
-        PlayerSection(
-          icon: Icons.circle_outlined,
-          labelName: "Jogador O",
-          initialName: nameO,
-          score: scoreO,
-          iconColor: Colors.blue,
-          backgroundColor: const Color(0xFFBBDEFB),
-          onNameChanged: (newName) {
-            setState(() {
-              nameO = newName;
-            });
-          },
-        ),
-      ],
-    ),
-
-    // Tabuleiro
-    Expanded(
-      child: Center(
-        child: GameTable(gameLogic: _gameLogic),
-      ),
-    ),
-
-    // Botões
-    Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 0.0),
-      child: Row(
+      body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          CustomIconButton(
-            imageName: 'start.png',
-            height: 100.0,
-            onPressed: _resetBoard,
+          // Placar
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: screenHeight * 0.002, horizontal: screenWidth * 0.001),
+            child: ScoreBoard(
+              players: [
+                PlayerSection(
+                  icon: Icons.close,
+                  labelName: "Jogador X",
+                  initialName: nameX,
+                  score: scoreX,
+                  iconColor: Colors.red,
+                  backgroundColor: const Color(0xFFFFCDD2),
+                  onNameChanged: (newName) {
+                    setState(() {
+                      nameX = newName;
+                    });
+                  },
+                ),
+                PlayerSection(
+                  icon: Icons.circle_outlined,
+                  labelName: "Jogador O",
+                  initialName: nameO,
+                  score: scoreO,
+                  iconColor: Colors.blue,
+                  backgroundColor: const Color(0xFFBBDEFB),
+                  onNameChanged: (newName) {
+                    setState(() {
+                      nameO = newName;
+                    });
+                  },
+                ),
+              ],
+            ),
           ),
-          CustomIconButton(
-            imageName: 'adsense.png',
-            height: 80.0,
-            onPressed: _showAdsense,
+
+          // Tabuleiro
+          Expanded(
+            child: GameTable(gameLogic: _gameLogic),
           ),
-          CustomIconButton(
-            imageName: 'reset.png',
-            height: 100.0,
-            onPressed: _resetGame,
+
+          // Botões
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.10, vertical: screenHeight * 0.02),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CustomIconButton(
+                  imageName: 'start.png',
+                  width: screenWidth * 0.27,
+                  onPressed: _resetBoard,
+                ),
+                CustomIconButton(
+                  imageName: 'adsense.png',
+                  width: screenWidth * 0.16,
+                  onPressed: _showAdsense,
+                ),
+                CustomIconButton(
+                  imageName: 'reset.png',
+                  width: screenWidth * 0.27,
+                  onPressed: _resetGame,
+                ),
+              ],
+            ),
           ),
+
+          // Banner Ad
+          if (_bannerAd != null)
+            SizedBox(
+              width: _bannerAd!.size.width.toDouble(),
+              height: _bannerAd!.size.height.toDouble(),
+              child: AdWidget(ad: _bannerAd!)
+            ),
         ],
       ),
-    ),
-
-    // Banner Ad
-    if (_bannerAd != null)
-      Container(
-        color: Colors.grey.shade200, // Para visualização (remova depois)
-        alignment: Alignment.bottomCenter,
-        width: _bannerAd!.size.width.toDouble(),
-        height: _bannerAd!.size.height.toDouble(),
-        child: AdWidget(ad: _bannerAd!),
-      ),
-  ],
-),
-
-
     );
   }
 }

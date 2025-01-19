@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class CustomIconButton extends StatelessWidget {
   final String imageName; // Nome da imagem, sem o caminho completo
-  final double height;
+  final double width;
   final VoidCallback onPressed;
 
   const CustomIconButton({
     super.key,
     required this.imageName,
-    required this.height,
+    required this.width,
     required this.onPressed,
   });
 
@@ -18,7 +18,7 @@ class CustomIconButton extends StatelessWidget {
       onTap: onPressed,
       child: Image.asset(
         'assets/images/$imageName', // Caminho completo montado automaticamente
-        height: height,
+        width: width,
       ),
     );
   }
