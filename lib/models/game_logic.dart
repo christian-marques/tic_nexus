@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class GameLogic {
   // Estado inicial do tabuleiro (vazio).
   final List<String> _board = List.generate(9, (_) => '');
+  static bool _isGameRunning = false;
 
   // Controle do jogador atual (X ou O).
   String _currentPlayer = 'X';
@@ -14,6 +15,23 @@ class GameLogic {
 
   // Callback para notificar vitória ou empate.
   Function(String)? onWinnerDeclared;
+
+  // Configura o estado do jogo como iniciado.
+  void startGame() {
+    _isGameRunning = true;
+    log("Jogo iniciado", name: "GAME_LOGIC");
+  }
+
+  // Configura o estado do jogo como finalizado.
+  void finishGame() {
+    _isGameRunning = false;
+    log("Jogo finalizado", name: "GAME_LOGIC");
+  }
+
+  // Verifica se o jogo está em andamento.
+  bool isGameRunning() {
+    return _isGameRunning;
+  }
 
   // Configura o callback para mudanças de estado.
   void setOnStateChanged(VoidCallback callback) {
@@ -27,6 +45,11 @@ class GameLogic {
 
   // Método chamado ao clicar em uma célula.
   void onCellTap(int index) {
+    if (!_isGameRunning) {
+      log("Tentativa de jogar sem o jogo iniciado", name: "GAME_LOGIC");
+      return; // Impede ações quando o jogo não está em execução.
+    }
+
     if (_board[index].isNotEmpty) return; // Impede sobreescrever células ocupadas.
 
     // Atualiza o estado da célula com o jogador atual.
@@ -34,8 +57,10 @@ class GameLogic {
 
     // Verifica se há vitória ou empate após o movimento.
     if (checkVictory()) {
+      finishGame();
       onWinnerDeclared?.call(_currentPlayer); // Notifica o jogador vencedor.
     } else if (checkDraw()) {
+      finishGame();
       onWinnerDeclared?.call('-'); // Notifica empate.
     } else {
       // Alterna entre X e O.
@@ -84,7 +109,7 @@ class GameLogic {
       if (_board[pattern[0]] != '' &&
           _board[pattern[0]] == _board[pattern[1]] &&
           _board[pattern[0]] == _board[pattern[2]]) {
-        log(">>>>>>>>>> VITÓRIAAAA!!", name: "DEVELOPER");
+        log(">>>>>>>>>> VITÓRIAAAA!!", name: "GAME_LOGIC");
         return true;
       }
     }
@@ -93,8 +118,8 @@ class GameLogic {
 
   // Verifica empate.
   bool checkDraw() {
-    if (_board.every((cell) => cell.isNotEmpty) && !checkVictory()){
-      log(">>>>>>>>>> EMPATE!!", name: "DEVELOPER");
+    if (_board.every((cell) => cell.isNotEmpty) && !checkVictory()) {
+      log(">>>>>>>>>> EMPATE!!", name: "GAME_LOGIC");
       return true;
     }
     return false;
@@ -106,6 +131,8 @@ class GameLogic {
       _board[i] = '';
     }
     _currentPlayer = 'X';
+    _isGameRunning = false; // Certifica-se de que o jogo seja reiniciado corretamente.
     _onStateChanged?.call(); // Notifica a mudança de estado.
+    log("Tabuleiro resetado", name: "GAME_LOGIC");
   }
 }

@@ -1,4 +1,3 @@
-// import 'dart:developer';
 import 'package:tic_nexus/models/ad_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:tic_nexus/models/dialog_screen.dart';
@@ -22,18 +21,14 @@ class _GamePageState extends State<GamePage> {
 
   static int scoreX = 0;
   static int scoreO = 0;
-  static String nameX = 'Jogador X'; 
-  static String nameO = 'Jogador O'; 
-  late TextEditingController _nameXController;
-  late TextEditingController _nameOController;
+  final TextEditingController controllerX = TextEditingController(text: 'Jogador X');
+  final TextEditingController controllerO = TextEditingController(text: 'Jogador O');
+
+  bool isEditingNames = true;
 
   @override
   void initState() {
     super.initState();
-  
-    // Inicializa os controladores com os nomes atuais
-    _nameXController = TextEditingController(text: nameX);
-    _nameOController = TextEditingController(text: nameO);
 
     _adHelper.loadBannerAd((banner) {
       setState(() {
@@ -46,14 +41,12 @@ class _GamePageState extends State<GamePage> {
     });
 
     _gameLogic.onWinnerDeclared = (winnerSymbol) {
-      String winnerName = '';
+      String winnerName = winnerSymbol == "X" ? controllerX.text : controllerO.text;
       setState(() {
         if (winnerSymbol == "X") {
           scoreX++;
-          winnerName = nameX;
         } else if (winnerSymbol == "O") {
           scoreO++;
-          winnerName = nameO;
         }
       });
       _showWinnerDialog(winnerSymbol, winnerName);
@@ -63,80 +56,65 @@ class _GamePageState extends State<GamePage> {
   @override
   void dispose() {
     _adHelper.disposeAds();
-    _nameXController.dispose();
-    _nameOController.dispose();
+    controllerX.dispose();
+    controllerO.dispose();
     super.dispose();
   }
 
-  void _resetBoard() {
+  void _startGame() {
     setState(() {
-      _gameLogic.resetBoard();
+      _gameLogic.startGame();
+      isEditingNames = false;
     });
   }
 
   void _resetGame() {
-    _resetBoard();
-    scoreX = 0;
-    scoreO = 0;
-    nameX = "Jogador X";
-    nameO = "Jogador O";
+    setState(() {
+      _gameLogic.resetBoard();
+      scoreX = 0;
+      scoreO = 0;
+      controllerX.text = 'Jogador X';
+      controllerO.text = 'Jogador O';
+      isEditingNames = true;
+    });
   }
 
-  void _showAdsense() {
-    _adHelper.showInterstitialAd();
-  }
-
-// MENSAGENS:
-// -------------------------------
-//  1) Caso empate:
-//      __"Empate!"__
-//      "Jogador X e Jogador O,"
-//      "jogaram muito bem!"
-// -------------------------------
-//  2) Caso Vitória X:
-//      __"Parabéns, Jogador X!"__
-//      "O <icone X> venceu!"
-// -------------------------------
-//  3) Caso Vitória O:
-//      __"Parabéns, Jogador O!"__
-//      "O <icone O> venceu!"
-// -------------------------------
-void _showWinnerDialog(String winnerSymbol, String winnerName) {
-  final Widget body = RichText(
-    textAlign: TextAlign.center,
-    text: TextSpan(
-      style: const TextStyle(fontSize: 18.0, color: Colors.black),
-      children: winnerSymbol == '-'
-          ? [
-              TextSpan(
-                text: "$nameX e $nameO,\n",
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const TextSpan(text: "jogaram muito bem!"),
-            ]
-          : [
-              const TextSpan(text: "O "),
-              WidgetSpan(
-                alignment: PlaceholderAlignment.middle,
-                child: Icon(
-                  winnerSymbol == 'X' ? Icons.close : Icons.circle_outlined,
-                  size: 24, // Funciona como um "tamanho de fonte" para o ícone no meio do texto
-                  color: winnerSymbol == 'X' ? Colors.red : Colors.blue,
+  void _showWinnerDialog(String winnerSymbol, String winnerName) {
+    final Widget body = RichText(
+      textAlign: TextAlign.center,
+      text: TextSpan(
+        style: const TextStyle(fontSize: 18.0, color: Colors.black),
+        children: winnerSymbol == '-'
+            ? [
+                TextSpan(
+                  text: "${controllerX.text} e ${controllerO.text},\n",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-              ),
-              const TextSpan(text: " venceu!"),
-            ],
-    ),
-  );
+                const TextSpan(text: "jogaram muito bem!"),
+              ]
+            : [
+                const TextSpan(text: "O "),
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.middle,
+                  child: Icon(
+                    winnerSymbol == 'X' ? Icons.close : Icons.circle_outlined,
+                    size: 24,
+                    color: winnerSymbol == 'X' ? Colors.red : Colors.blue,
+                  ),
+                ),
+                const TextSpan(text: " venceu!"),
+              ],
+      ),
+    );
 
-  DialogScreen(
-    context: context,
-    title: winnerSymbol == '-' ? "Empate!" : "Parabéns, $winnerName!",
-    body: body,
-    onConfirmed: _resetBoard, // Reseta o tabuleiro ao confirmar
-  ).show();
-}
-
+    DialogScreen(
+      context: context,
+      title: winnerSymbol == '-' ? "Empate!" : "Parabéns, $winnerName!",
+      body: body,
+      onConfirmed: _gameLogic.resetBoard,
+    ).show();
+    _gameLogic.startGame();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,28 +143,20 @@ void _showWinnerDialog(String winnerSymbol, String winnerName) {
                 PlayerSection(
                   icon: Icons.close,
                   labelName: "Jogador X",
-                  controller: _nameXController,
+                  controller: controllerX,
                   score: scoreX,
                   iconColor: Colors.red,
                   backgroundColor: const Color(0xFFFFCDD2),
-                  onNameChanged: (newName) {
-                    setState(() {
-                      nameX = newName;
-                    });
-                  },
+                  isEditable: isEditingNames,
                 ),
                 PlayerSection(
                   icon: Icons.circle_outlined,
                   labelName: "Jogador O",
-                  controller: _nameOController,
+                  controller: controllerO,
                   score: scoreO,
                   iconColor: Colors.blue,
                   backgroundColor: const Color(0xFFBBDEFB),
-                  onNameChanged: (newName) {
-                    setState(() {
-                      nameO = newName;
-                    });
-                  },
+                  isEditable: isEditingNames,
                 ),
               ],
             ),
@@ -206,12 +176,12 @@ void _showWinnerDialog(String winnerSymbol, String winnerName) {
                 CustomIconButton(
                   imageName: 'start.png',
                   width: screenWidth * 0.27,
-                  onPressed: _resetBoard,
+                  onPressed: _startGame,
                 ),
                 CustomIconButton(
                   imageName: 'adsense.png',
                   width: screenWidth * 0.16,
-                  onPressed: _showAdsense,
+                  onPressed: _adHelper.showInterstitialAd,
                 ),
                 CustomIconButton(
                   imageName: 'reset.png',
@@ -227,7 +197,7 @@ void _showWinnerDialog(String winnerSymbol, String winnerName) {
             SizedBox(
               width: _bannerAd!.size.width.toDouble(),
               height: _bannerAd!.size.height.toDouble(),
-              child: AdWidget(ad: _bannerAd!)
+              child: AdWidget(ad: _bannerAd!),
             ),
         ],
       ),

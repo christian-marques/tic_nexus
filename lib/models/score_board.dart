@@ -51,21 +51,21 @@ class ScoreBoard extends StatelessWidget {
 class PlayerSection extends StatelessWidget {
   final IconData icon;
   final String labelName;
-  final TextEditingController controller; // Controlador reutilizável
+  final TextEditingController controller;
   final int score;
   final Color iconColor;
   final Color backgroundColor;
-  final ValueChanged<String>? onNameChanged; // Callback para mudanças no nome do jogador
+  final bool isEditable; // Controle de edição
 
   const PlayerSection({
     super.key,
     required this.icon,
     required this.labelName,
-    required this.controller, // Recebe o controlador
+    required this.controller,
     required this.score,
     required this.iconColor,
     required this.backgroundColor,
-    this.onNameChanged,
+    this.isEditable = true,
   });
 
   @override
@@ -73,14 +73,14 @@ class PlayerSection extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: screenWidth * 0.02), // Espaçamento proporcional
+      padding: EdgeInsets.only(bottom: screenWidth * 0.02),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Ícone do Jogador
           Icon(
             icon,
-            size: screenWidth * 0.08, // Tamanho proporcional ao dispositivo
+            size: screenWidth * 0.08,
             color: iconColor,
           ),
           SizedBox(width: screenWidth * 0.02),
@@ -88,12 +88,12 @@ class PlayerSection extends StatelessWidget {
           // Nome do jogador e TextField
           Expanded(
             child: TextField(
-              controller: controller, // Usa o controlador existente
+              controller: controller,
+              enabled: isEditable, // Habilita/desabilita edição
               decoration: InputDecoration(
                 labelText: labelName,
                 border: OutlineInputBorder(),
               ),
-              onChanged: onNameChanged, // Atualiza em tempo real
             ),
           ),
           SizedBox(width: screenWidth * 0.015),
