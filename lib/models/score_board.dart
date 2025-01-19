@@ -51,7 +51,7 @@ class ScoreBoard extends StatelessWidget {
 class PlayerSection extends StatelessWidget {
   final IconData icon;
   final String labelName;
-  final String initialName;
+  final TextEditingController controller; // Controlador reutilizável
   final int score;
   final Color iconColor;
   final Color backgroundColor;
@@ -61,7 +61,7 @@ class PlayerSection extends StatelessWidget {
     super.key,
     required this.icon,
     required this.labelName,
-    required this.initialName,
+    required this.controller, // Recebe o controlador
     required this.score,
     required this.iconColor,
     required this.backgroundColor,
@@ -71,8 +71,6 @@ class PlayerSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
-    final TextEditingController controller = TextEditingController(text: initialName);
 
     return Padding(
       padding: EdgeInsets.only(bottom: screenWidth * 0.02), // Espaçamento proporcional
@@ -90,12 +88,12 @@ class PlayerSection extends StatelessWidget {
           // Nome do jogador e TextField
           Expanded(
             child: TextField(
-              controller: controller,
+              controller: controller, // Usa o controlador existente
               decoration: InputDecoration(
                 labelText: labelName,
                 border: OutlineInputBorder(),
               ),
-              onSubmitted: onNameChanged, // Chama o callback ao finalizar a edição
+              onChanged: onNameChanged, // Atualiza em tempo real
             ),
           ),
           SizedBox(width: screenWidth * 0.015),

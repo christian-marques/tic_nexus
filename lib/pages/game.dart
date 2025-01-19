@@ -24,10 +24,16 @@ class _GamePageState extends State<GamePage> {
   static int scoreO = 0;
   static String nameX = 'Jogador X'; 
   static String nameO = 'Jogador O'; 
+  late TextEditingController _nameXController;
+  late TextEditingController _nameOController;
 
   @override
   void initState() {
     super.initState();
+  
+    // Inicializa os controladores com os nomes atuais
+    _nameXController = TextEditingController(text: nameX);
+    _nameOController = TextEditingController(text: nameO);
 
     _adHelper.loadBannerAd((banner) {
       setState(() {
@@ -57,6 +63,8 @@ class _GamePageState extends State<GamePage> {
   @override
   void dispose() {
     _adHelper.disposeAds();
+    _nameXController.dispose();
+    _nameOController.dispose();
     super.dispose();
   }
 
@@ -157,7 +165,7 @@ void _showWinnerDialog(String winnerSymbol, String winnerName) {
                 PlayerSection(
                   icon: Icons.close,
                   labelName: "Jogador X",
-                  initialName: nameX,
+                  controller: _nameXController,
                   score: scoreX,
                   iconColor: Colors.red,
                   backgroundColor: const Color(0xFFFFCDD2),
@@ -170,7 +178,7 @@ void _showWinnerDialog(String winnerSymbol, String winnerName) {
                 PlayerSection(
                   icon: Icons.circle_outlined,
                   labelName: "Jogador O",
-                  initialName: nameO,
+                  controller: _nameOController,
                   score: scoreO,
                   iconColor: Colors.blue,
                   backgroundColor: const Color(0xFFBBDEFB),
