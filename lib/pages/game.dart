@@ -23,8 +23,9 @@ class _GamePageState extends State<GamePage> {
   static int scoreO = 0;
   final TextEditingController controllerX = TextEditingController(text: 'Jogador X');
   final TextEditingController controllerO = TextEditingController(text: 'Jogador O');
-
   bool isEditingNames = true;
+
+  bool get isGameRunning => _gameLogic.isGameRunning();
 
   @override
   void initState() {
@@ -62,20 +63,23 @@ class _GamePageState extends State<GamePage> {
   }
 
   void _startGame() {
-    setState(() {
-      _gameLogic.startGame();
-      isEditingNames = false;
-    });
+    if (!isGameRunning){
+      setState(() {
+        _gameLogic.startGame();
+        isEditingNames = false;
+      });
+    }
   }
 
   void _resetGame() {
     setState(() {
       _gameLogic.resetBoard();
+      _gameLogic.finishGame();
+      isEditingNames = true;
       scoreX = 0;
       scoreO = 0;
       controllerX.text = 'Jogador X';
       controllerO.text = 'Jogador O';
-      isEditingNames = true;
     });
   }
 
@@ -115,7 +119,7 @@ class _GamePageState extends State<GamePage> {
         _gameLogic.resetBoard(); // Reinicia o tabuleiro
         _gameLogic.startGame();  // Recomeça o jogo automaticamente
         setState(() {
-          isEditingNames = false;  // Evita edição de nomes após reinício
+          isEditingNames = false;
         });
       }
     ).show();

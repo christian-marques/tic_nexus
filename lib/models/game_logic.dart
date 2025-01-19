@@ -131,8 +131,8 @@ class GameLogic {
       _board[i] = '';
     }
     _currentPlayer = 'X';
-    _isGameRunning = false; // Certifica-se de que o jogo seja reiniciado corretamente.
-    _onStateChanged?.call(); // Notifica a mudança de estado.
+    // _isGameRunning = false; // Certifica-se de que o jogo seja reiniciado corretamente.
+    // _onStateChanged?.call(); // Notifica a mudança de estado.
     log("Tabuleiro resetado", name: "GAME_LOGIC");
   }
 }
