@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:tic_nexus/models/ad_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:tic_nexus/models/icon_button.dart';
 import 'package:tic_nexus/models/score_board.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:tic_nexus/models/game_table.dart';
@@ -80,33 +81,59 @@ class _GamePageState extends State<GamePage> {
     nameO = "Jogador O";
   }
 
-  void _showWinnerDialog(String winnerSymbol, String winnerName) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // Impede fechar clicando fora do diálogo
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            winnerSymbol == '-' ? "Empate!" : "Parabéns, $winnerName!"),
-          content: Text(
-            winnerSymbol == '-' ? 
-              """$nameX e $nameO,\njogaram muito bem!""" : 
-              """O $winnerSymbol venceu!""",
-            style: const TextStyle(fontSize: 18.0),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Fecha o diálogo
-                _resetBoard(); // Reseta o tabuleiro automaticamente
-              },
-              child: const Text("OK"),
-            ),
-          ],
-        );
-      },
-    );
+  void _showAdsense(){
+    _adHelper.showInterstitialAd();
   }
+
+ void _showWinnerDialog(String winnerSymbol, String winnerName) {
+  showDialog(
+    context: context,
+    barrierDismissible: false, // Impede fechar clicando fora do diálogo
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(
+          winnerSymbol == '-' ? "Empate!" : "Parabéns, $winnerName!",
+        ),
+        content: RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            style: const TextStyle(fontSize: 18.0, color: Colors.black),
+            children: winnerSymbol == '-'
+                ? [
+                    TextSpan(
+                      text: "$nameX e $nameO,\n",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const TextSpan(text: "jogaram muito bem!"),
+                  ]
+                : [
+                    const TextSpan(text: "O "),
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: Icon(
+                        winnerSymbol == 'X' ? Icons.close : Icons.circle_outlined,
+                        size: 24.0,
+                        color: winnerSymbol == 'X' ? Colors.red : Colors.blue,
+                      ),
+                    ),
+                    const TextSpan(text: " venceu!"),
+                  ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Fecha o diálogo
+              _resetBoard(); // Reseta o tabuleiro automaticamente
+            },
+            child: const Text("OK"),
+          ),
+        ],
+      );
+    },
+  );
+  }
+
 
 
   @override
@@ -124,77 +151,87 @@ class _GamePageState extends State<GamePage> {
         foregroundColor: Colors.white,
         toolbarHeight: (titleFontSize + 5),
       ),
-      body: Stack(
+body: Column(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  crossAxisAlignment: CrossAxisAlignment.stretch,
+  children: [
+    // Placar
+    ScoreBoard(
+      players: [
+        PlayerSection(
+          icon: Icons.close,
+          labelName: "Jogador X",
+          initialName: nameX,
+          score: scoreX,
+          iconColor: Colors.red,
+          backgroundColor: const Color(0xFFFFCDD2),
+          onNameChanged: (newName) {
+            setState(() {
+              nameX = newName;
+            });
+          },
+        ),
+        PlayerSection(
+          icon: Icons.circle_outlined,
+          labelName: "Jogador O",
+          initialName: nameO,
+          score: scoreO,
+          iconColor: Colors.blue,
+          backgroundColor: const Color(0xFFBBDEFB),
+          onNameChanged: (newName) {
+            setState(() {
+              nameO = newName;
+            });
+          },
+        ),
+      ],
+    ),
+
+    // Tabuleiro
+    Expanded(
+      child: Center(
+        child: GameTable(gameLogic: _gameLogic),
+      ),
+    ),
+
+    // Botões
+    Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 0.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Bloco do placar
-                ScoreBoard(
-                  players: [
-                    PlayerSection(
-                      icon: Icons.close,
-                      labelName: "Jogador X",
-                      initialName: nameX,
-                      score: scoreX, // Placar inicial fixo.
-                      iconColor: Colors.red,
-                      backgroundColor: const Color(0xFFFFCDD2),
-                    ),
-                    PlayerSection(
-                      icon: Icons.circle_outlined,
-                      labelName: "Jogador O",
-                      initialName: nameO,
-                      score: scoreO, // Placar inicial fixo.
-                      iconColor: Colors.blue,
-                      backgroundColor: const Color(0xFFBBDEFB),
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: Center(
-                    child: GameTable(gameLogic: _gameLogic), // Apenas exibe o tabuleiro.
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 32.0), // Ajusta o espaçamento geral
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween, // Espaço igual entre os botões
-                    children: [
-                      ElevatedButton(
-                        onPressed: _resetBoard, // Reseta apenas o tabuleiro.
-                        child: const Text('Próxima Partida'),
-                      ),
-                      ElevatedButton(
-                        onPressed: _resetGame, // Reseta o jogo e o placar.
-                        child: const Text('Reset'),
-                      ),
-                    ],
-                  ),
-                ),
-                if (_bannerAd != null)
-                  Container(
-                    alignment: Alignment.bottomCenter,
-                    width: _bannerAd!.size.width.toDouble(),
-                    height: _bannerAd!.size.height.toDouble(),
-                    child: AdWidget(ad: _bannerAd!),
-                  ),
-              ],
-            ),
+          CustomIconButton(
+            imageName: 'start.png',
+            height: 100.0,
+            onPressed: _resetBoard,
           ),
-          Positioned(
-            top: 8.0,
-            left: 8.0,
-            child: FloatingActionButton(
-              onPressed: () {
-                _adHelper.showInterstitialAd();
-              },
-              child: const Icon(Icons.ads_click_rounded),
-            ),
+          CustomIconButton(
+            imageName: 'adsense.png',
+            height: 80.0,
+            onPressed: _showAdsense,
+          ),
+          CustomIconButton(
+            imageName: 'reset.png',
+            height: 100.0,
+            onPressed: _resetGame,
           ),
         ],
       ),
+    ),
+
+    // Banner Ad
+    if (_bannerAd != null)
+      Container(
+        color: Colors.grey.shade200, // Para visualização (remova depois)
+        alignment: Alignment.bottomCenter,
+        width: _bannerAd!.size.width.toDouble(),
+        height: _bannerAd!.size.height.toDouble(),
+        child: AdWidget(ad: _bannerAd!),
+      ),
+  ],
+),
+
+
     );
   }
 }

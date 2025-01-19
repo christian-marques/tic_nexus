@@ -53,6 +53,7 @@ class PlayerSection extends StatelessWidget {
   final int score;
   final Color iconColor;
   final Color backgroundColor;
+  final ValueChanged<String>? onNameChanged; // Callback para mudanças no nome do jogador
 
   const PlayerSection({
     super.key,
@@ -62,10 +63,13 @@ class PlayerSection extends StatelessWidget {
     required this.score,
     required this.iconColor,
     required this.backgroundColor,
+    this.onNameChanged,
   });
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController controller = TextEditingController(text: initialName);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
@@ -82,11 +86,13 @@ class PlayerSection extends StatelessWidget {
           // Nome do jogador e TextField
           Expanded(
             child: TextField(
+              controller: controller,
               decoration: InputDecoration(
                 labelText: labelName,
                 border: OutlineInputBorder(),
               ),
-              controller: TextEditingController(text: initialName),
+              onSubmitted: onNameChanged, // Chama o callback ao finalizar a edição
+              // onEditingComplete: onNameChanged,
             ),
           ),
           const SizedBox(width: 8),
