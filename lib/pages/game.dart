@@ -1,6 +1,7 @@
-import 'dart:developer';
+// import 'dart:developer';
 import 'package:tic_nexus/models/ad_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:tic_nexus/models/dialog_screen.dart';
 import 'package:tic_nexus/models/icon_button.dart';
 import 'package:tic_nexus/models/score_board.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -77,54 +78,57 @@ class _GamePageState extends State<GamePage> {
     _adHelper.showInterstitialAd();
   }
 
-  void _showWinnerDialog(String winnerSymbol, String winnerName) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            winnerSymbol == '-' ? "Empate!" : "Parabéns, $winnerName!",
-          ),
-          content: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              style: const TextStyle(fontSize: 18.0, color: Colors.black),
-              children: winnerSymbol == '-'
-                  ? [
-                      TextSpan(
-                        text: "$nameX e $nameO,\n",
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const TextSpan(text: "jogaram muito bem!"),
-                    ]
-                  : [
-                      const TextSpan(text: "O "),
-                      WidgetSpan(
-                        alignment: PlaceholderAlignment.middle,
-                        child: Icon(
-                          winnerSymbol == 'X' ? Icons.close : Icons.circle_outlined,
-                          size: 24.0,
-                          color: winnerSymbol == 'X' ? Colors.red : Colors.blue,
-                        ),
-                      ),
-                      const TextSpan(text: " venceu!"),
-                    ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _resetBoard();
-              },
-              child: const Text("OK"),
-            ),
-          ],
-        );
-      },
-    );
-  }
+// MENSAGENS:
+// -------------------------------
+//  1) Caso empate:
+//      __"Empate!"__
+//      "Jogador X e Jogador O,"
+//      "jogaram muito bem!"
+// -------------------------------
+//  2) Caso Vitória X:
+//      __"Parabéns, Jogador X!"__
+//      "O <icone X> venceu!"
+// -------------------------------
+//  3) Caso Vitória O:
+//      __"Parabéns, Jogador O!"__
+//      "O <icone O> venceu!"
+// -------------------------------
+void _showWinnerDialog(String winnerSymbol, String winnerName) {
+  final Widget body = RichText(
+    textAlign: TextAlign.center,
+    text: TextSpan(
+      style: const TextStyle(fontSize: 18.0, color: Colors.black),
+      children: winnerSymbol == '-'
+          ? [
+              TextSpan(
+                text: "$nameX e $nameO,\n",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const TextSpan(text: "jogaram muito bem!"),
+            ]
+          : [
+              const TextSpan(text: "O "),
+              WidgetSpan(
+                alignment: PlaceholderAlignment.middle,
+                child: Icon(
+                  winnerSymbol == 'X' ? Icons.close : Icons.circle_outlined,
+                  size: 24, // Funciona como um "tamanho de fonte" para o ícone no meio do texto
+                  color: winnerSymbol == 'X' ? Colors.red : Colors.blue,
+                ),
+              ),
+              const TextSpan(text: " venceu!"),
+            ],
+    ),
+  );
+
+  DialogScreen(
+    context: context,
+    title: winnerSymbol == '-' ? "Empate!" : "Parabéns, $winnerName!",
+    body: body,
+    onConfirmed: _resetBoard, // Reseta o tabuleiro ao confirmar
+  ).show();
+}
+
 
   @override
   Widget build(BuildContext context) {

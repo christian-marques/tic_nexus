@@ -98,7 +98,7 @@ class PlayerSection extends StatelessWidget {
               onSubmitted: onNameChanged, // Chama o callback ao finalizar a edição
             ),
           ),
-          SizedBox(width: screenWidth * 0.02),
+          SizedBox(width: screenWidth * 0.015),
 
           // Bloco do Placar
           Container(
