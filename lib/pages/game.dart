@@ -149,84 +149,125 @@ class _GamePageState extends State<GamePage> {
         foregroundColor: Colors.white,
         toolbarHeight: screenHeight * 0.04,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      resizeToAvoidBottomInset: true, // Permite o conteúdo se ajustar ao teclado
+      body: Stack(
         children: [
-          // Placar
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: screenHeight * 0.002, horizontal: screenWidth * 0.001),
-            child: ScoreBoard(
-              players: [
-                PlayerSection(
-                  icon: Icons.close,
-                  labelName: "Jogador X",
-                  controller: controllerX,
-                  score: scoreX,
-                  iconColor: Colors.red,
-                  backgroundColor: const Color(0xFFFFCDD2),
-                  isEditable: isEditingNames,
-                ),
-                PlayerSection(
-                  icon: Icons.circle_outlined,
-                  labelName: "Jogador O",
-                  controller: controllerO,
-                  score: scoreO,
-                  iconColor: Colors.blue,
-                  backgroundColor: const Color(0xFFBBDEFB),
-                  isEditable: isEditingNames,
-                ),
-              ],
+          // Conteúdo principal
+          SingleChildScrollView(
+            padding: EdgeInsets.only(
+              bottom: _bannerAd != null ? _bannerAd!.size.height.toDouble() : 0,
             ),
-          ),
-
-          // Tabuleiro com tutorial
-          Expanded(
-            child: Stack(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                GameTable(gameLogic: _gameLogic), // Tabuleiro
-                if (isWaitingGameStart)
-                  TutorialOverlay(), // Adiciona o tutorial quando o jogo não está ativo
+                // Placar
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: screenHeight * 0.001,
+                    horizontal: screenWidth * 0.001,
+                  ),
+                  child: ScoreBoard(
+                    players: [
+                      PlayerSection(
+                        icon: Icons.close,
+                        labelName: "Jogador X",
+                        controller: controllerX,
+                        score: scoreX,
+                        iconColor: Colors.red,
+                        backgroundColor: const Color(0xFFFFCDD2),
+                        isEditable: isEditingNames,
+                      ),
+                      PlayerSection(
+                        icon: Icons.circle_outlined,
+                        labelName: "Jogador O",
+                        controller: controllerO,
+                        score: scoreO,
+                        iconColor: Colors.blue,
+                        backgroundColor: const Color(0xFFBBDEFB),
+                        isEditable: isEditingNames,
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Tabuleiro com tutorial
+                SizedBox(
+                  height: screenHeight * 0.47,
+                  // decoration: BoxDecoration(
+                  //   color: const Color.fromARGB(255, 204, 6, 6),
+                  //   border: Border(
+                  //     top: BorderSide(
+                  //       color: const Color.fromARGB(255, 7, 194, 17),
+                  //     ),
+                  //   ),
+                  // ),
+                  child: Stack(
+                    children: [
+                      GameTable(gameLogic: _gameLogic),
+                      if (isWaitingGameStart)
+                        const TutorialOverlay(),
+                    ],
+                  ),
+                ),
+
+                // Botões
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.10,
+                    vertical: screenHeight * 0.00,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CustomIconButton(
+                        imageName: 'start.png',
+                        width: screenWidth * 0.27,
+                        isGameRunning: isGameRunning,
+                        onPressed: _startGame,
+                      ),
+                      CustomIconButton(
+                        imageName: 'adsense.png',
+                        width: screenWidth * 0.16,
+                        isGameRunning: isGameRunning,
+                        onPressed: _adHelper.showInterstitialAd,
+                      ),
+                      CustomIconButton(
+                        imageName: 'reset.png',
+                        width: screenWidth * 0.27,
+                        isGameRunning: isGameRunning,
+                        onPressed: _resetGame,
+                      ),
+                    ],
+                  ),
+                ),
+                
+
+                // Banner Ad no final da página
+                if (_bannerAd != null)
+                  Positioned(
+                    bottom: 0.0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      width: _bannerAd!.size.width.toDouble(),
+                      height: _bannerAd!.size.height.toDouble(),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 196, 193, 193),
+                        border: Border(
+                          top: BorderSide(
+                            color: const Color.fromARGB(255, 185, 181, 181),
+                          ),
+                        ),
+                      ),
+                      child: AdWidget(ad: _bannerAd!),
+                    ),
+                  ),
               ],
             ),
           ),
-
-          // Botões
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.10, vertical: screenHeight * 0.02),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomIconButton(
-                  imageName: 'start.png',
-                  width: screenWidth * 0.27,
-                  isGameRunning: isGameRunning,
-                  onPressed: _startGame,
-                ),
-                CustomIconButton(
-                  imageName: 'adsense.png',
-                  width: screenWidth * 0.16,
-                  isGameRunning: isGameRunning,
-                  onPressed: _adHelper.showInterstitialAd,
-                ),
-                CustomIconButton(
-                  imageName: 'reset.png',
-                  width: screenWidth * 0.27,
-                  isGameRunning: isGameRunning,
-                  onPressed: _resetGame,
-                ),
-              ],
-            ),
-          ),
-
-          // Banner Ad
-          if (_bannerAd != null)
-            SizedBox(
-              width: _bannerAd!.size.width.toDouble(),
-              height: _bannerAd!.size.height.toDouble(),
-              child: AdWidget(ad: _bannerAd!),
-            ),
         ],
       ),
     );
   }
+
 }
