@@ -6,6 +6,7 @@ import 'package:tic_nexus/models/score_board.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:tic_nexus/models/game_table.dart';
 import 'package:tic_nexus/models/game_logic.dart';
+import 'package:tic_nexus/models/tutorials.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -24,12 +25,17 @@ class _GamePageState extends State<GamePage> {
   final TextEditingController controllerX = TextEditingController(text: 'Jogador X');
   final TextEditingController controllerO = TextEditingController(text: 'Jogador O');
   bool isEditingNames = true;
+  bool isWaitingGameStart = true;
 
   bool get isGameRunning => _gameLogic.isGameRunning();
 
   @override
   void initState() {
     super.initState();
+
+    setState(() {
+      isWaitingGameStart = true;
+    });
 
     _adHelper.loadBannerAd((banner) {
       setState(() {
@@ -67,6 +73,7 @@ class _GamePageState extends State<GamePage> {
       setState(() {
         _gameLogic.startGame();
         isEditingNames = false;
+        isWaitingGameStart = false;
       });
     }
   }
@@ -76,6 +83,7 @@ class _GamePageState extends State<GamePage> {
       _gameLogic.resetBoard();
       _gameLogic.finishGame();
       isEditingNames = true;
+      isWaitingGameStart = true;
       scoreX = 0;
       scoreO = 0;
       controllerX.text = 'Jogador X';
@@ -171,9 +179,15 @@ class _GamePageState extends State<GamePage> {
             ),
           ),
 
-          // Tabuleiro
+          // Tabuleiro com tutorial
           Expanded(
-            child: GameTable(gameLogic: _gameLogic),
+            child: Stack(
+              children: [
+                GameTable(gameLogic: _gameLogic), // Tabuleiro
+                if (isWaitingGameStart)
+                  TutorialOverlay(), // Adiciona o tutorial quando o jogo não está ativo
+              ],
+            ),
           ),
 
           // Botões
