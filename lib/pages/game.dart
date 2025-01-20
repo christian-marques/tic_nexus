@@ -185,16 +185,19 @@ class _GamePageState extends State<GamePage> {
                 CustomIconButton(
                   imageName: 'start.png',
                   width: screenWidth * 0.27,
+                  isGameRunning: isGameRunning,
                   onPressed: _startGame,
                 ),
                 CustomIconButton(
                   imageName: 'adsense.png',
                   width: screenWidth * 0.16,
+                  isGameRunning: isGameRunning,
                   onPressed: _adHelper.showInterstitialAd,
                 ),
                 CustomIconButton(
                   imageName: 'reset.png',
                   width: screenWidth * 0.27,
+                  isGameRunning: isGameRunning,
                   onPressed: _resetGame,
                 ),
               ],
