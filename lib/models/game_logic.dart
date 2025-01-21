@@ -1,11 +1,12 @@
 import 'dart:developer';
-
+import 'package:tic_nexus/models/cpu_player.dart';
 import 'package:flutter/material.dart';
 
 class GameLogic {
-  // Estado inicial do tabuleiro (vazio).
-  final List<String> _board = List.generate(9, (_) => '');
+  final List<String> _board = List.generate(9, (_) => ''); // Estado inicial do tabuleiro (vazio).
+  final CPUPlayer _cpuPlayer = CPUPlayer(); // Adicione a instância do CPUPlayer
   static bool _isGameRunning = false;
+  static bool _isCpuPlayer = false;
 
   // Controle do jogador atual (X ou O).
   String _currentPlayer = 'X';
@@ -33,6 +34,20 @@ class GameLogic {
     return _isGameRunning;
   }
 
+  // Coloca o Jogador O como CPU
+  void setPlayerOasCPU(){
+    _isCpuPlayer = true;
+  }
+
+  // Coloca o Jogador O como humano
+  void setPlayerOasHuman(){
+    _isCpuPlayer = false;
+  }
+
+  bool isPlayerOCPU(){
+    return _isCpuPlayer;
+  }
+
   // Configura o callback para mudanças de estado.
   void setOnStateChanged(VoidCallback callback) {
     _onStateChanged = callback;
@@ -47,10 +62,12 @@ class GameLogic {
   void onCellTap(int index) {
     if (!_isGameRunning) {
       log("Tentativa de jogar sem o jogo iniciado", name: "GAME_LOGIC");
-      return; // Impede ações quando o jogo não está em execução.
+      return; // Bloqueia jogadas sem iniciar o jogo
     }
-
-    if (_board[index].isNotEmpty) return; // Impede sobreescrever células ocupadas.
+    if (_board[index].isNotEmpty) {
+      log("Tentativa de sobreposição de jogada", name: "GAME_LOGIC");
+      return; // Bloqueia sobreposição de jogadas
+    }
 
     // Atualiza o estado da célula com o jogador atual.
     _board[index] = _currentPlayer;
@@ -62,9 +79,20 @@ class GameLogic {
     } else if (checkDraw()) {
       finishGame();
       onWinnerDeclared?.call('-'); // Notifica empate.
-    } else {
-      // Alterna entre X e O.
-      _currentPlayer = (_currentPlayer == 'X') ? 'O' : 'X';
+      return;
+    }
+
+    // Alterna entre X e O.
+    _currentPlayer = (_currentPlayer == 'X') ? 'O' : 'X';
+
+    // Jogada da CPU (apenas se for a vez da "O" e isPlayerOCPU for true)
+    if (_currentPlayer == 'O' && isPlayerOCPU()) {
+      int cpuMove = _cpuPlayer.getNextMove(_board);
+      if (cpuMove != -1) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          onCellTap(cpuMove); // Chama recursivamente para validar e executar a jogada
+        });
+      }
     }
 
     // Notifica a mudança de estado.

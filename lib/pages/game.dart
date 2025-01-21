@@ -71,6 +71,8 @@ class _GamePageState extends State<GamePage> {
   void _startGame() {
     if (!isGameRunning){
       setState(() {
+        _gameLogic.setPlayerOasCPU();
+        // _gameLogic.setPlayerOasHuman();
         _gameLogic.startGame();
         isEditingNames = false;
         isWaitingGameStart = false;
