@@ -88,7 +88,7 @@ class _GamePageState extends State<GamePage> {
       scoreX = 0;
       scoreO = 0;
       controllerX.text = 'Jogador X';
-      controllerO.text = 'Jogador O';
+      controllerO.text = isPlayerOCPU ? 'CPU' : 'Jogador O';
     });
   }
 
