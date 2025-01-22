@@ -7,6 +7,8 @@ class GameLogic {
   final CPUPlayer _cpuPlayer = CPUPlayer(); // Adicione a instância do CPUPlayer
   static bool _isGameRunning = false;
   static bool _isCpuPlayer = false;
+  static bool _isProcessing = false; // Indica se uma jogada está sendo processada
+
 
   // Controle do jogador atual (X ou O).
   String _currentPlayer = 'X';
@@ -60,6 +62,11 @@ class GameLogic {
 
   // Método chamado ao clicar em uma célula.
   void onCellTap(int index) {
+    if (_isProcessing) {
+      log("Jogada em processamento. Aguarde!", name: "GAME_LOGIC");
+      return;
+    }
+
     if (!_isGameRunning) {
       log("Tentativa de jogar sem o jogo iniciado", name: "GAME_LOGIC");
       return; // Bloqueia jogadas sem iniciar o jogo
@@ -87,11 +94,16 @@ class GameLogic {
 
     // Jogada da CPU (apenas se for a vez da "O" e isPlayerOCPU for true)
     if (_currentPlayer == 'O' && isPlayerOCPU()) {
+      _isProcessing = true; // Bloqueia jogadas enquanto a CPU processa
       int cpuMove = _cpuPlayer.getNextMove(_board);
       if (cpuMove != -1) {
         Future.delayed(const Duration(milliseconds: 500), () {
+          _isProcessing = false; // Libera após a jogada
           onCellTap(cpuMove); // Chama recursivamente para validar e executar a jogada
         });
+      }
+      else{
+        _isProcessing = false; // Libera após a jogada humanda
       }
     }
 
@@ -159,8 +171,7 @@ class GameLogic {
       _board[i] = '';
     }
     _currentPlayer = 'X';
-    // _isGameRunning = false; // Certifica-se de que o jogo seja reiniciado corretamente.
-    // _onStateChanged?.call(); // Notifica a mudança de estado.
+    _isProcessing = false; // Garante que não tem
     log("Tabuleiro resetado", name: "GAME_LOGIC");
   }
 }
