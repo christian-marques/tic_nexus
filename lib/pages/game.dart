@@ -186,7 +186,7 @@ class _GamePageState extends State<GamePage> {
                         score: scoreO,
                         iconColor: Colors.blue,
                         backgroundColor: const Color(0xFFBBDEFB),
-                        isEditable: isEditingNames,
+                        isEditable: (isEditingNames && !isPlayerOCPU),
                       ),
                     ],
                   ),
@@ -268,8 +268,10 @@ class _GamePageState extends State<GamePage> {
                       setState(() {
                         isPlayerOCPU = !isPlayerOCPU;
                         if (isPlayerOCPU) {
+                          controllerO.text = "CPU";
                           _gameLogic.setPlayerOasCPU();
                         } else {
+                          controllerO.text = "Jogador O";
                           _gameLogic.setPlayerOasHuman();
                         }
                       });
