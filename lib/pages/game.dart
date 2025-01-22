@@ -26,6 +26,7 @@ class _GamePageState extends State<GamePage> {
   final TextEditingController controllerO = TextEditingController(text: 'Jogador O');
   bool isEditingNames = true;
   bool isWaitingGameStart = true;
+  bool isPlayerOCPU = false; // Inicialmente como Player vs Player
 
   bool get isGameRunning => _gameLogic.isGameRunning();
 
@@ -71,8 +72,6 @@ class _GamePageState extends State<GamePage> {
   void _startGame() {
     if (!isGameRunning){
       setState(() {
-        _gameLogic.setPlayerOasCPU();
-        // _gameLogic.setPlayerOasHuman();
         _gameLogic.startGame();
         isEditingNames = false;
         isWaitingGameStart = false;
@@ -126,6 +125,7 @@ class _GamePageState extends State<GamePage> {
       title: winnerSymbol == '-' ? "Empate!" : "Parabéns, $winnerName!",
       body: body,
       onConfirmed: (){
+        _adHelper.showInterstitialAd();
         _gameLogic.resetBoard(); // Reinicia o tabuleiro
         _gameLogic.startGame();  // Recomeça o jogo automaticamente
         setState(() {
@@ -195,14 +195,6 @@ class _GamePageState extends State<GamePage> {
                 // Tabuleiro com tutorial
                 SizedBox(
                   height: screenHeight * 0.47,
-                  // decoration: BoxDecoration(
-                  //   color: const Color.fromARGB(255, 204, 6, 6),
-                  //   border: Border(
-                  //     top: BorderSide(
-                  //       color: const Color.fromARGB(255, 7, 194, 17),
-                  //     ),
-                  //   ),
-                  // ),
                   child: Stack(
                     children: [
                       GameTable(gameLogic: _gameLogic),
@@ -242,34 +234,59 @@ class _GamePageState extends State<GamePage> {
                     ],
                   ),
                 ),
-                
 
                 // Banner Ad no final da página
                 if (_bannerAd != null)
-                  Positioned(
-                    bottom: 0.0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      width: _bannerAd!.size.width.toDouble(),
-                      height: _bannerAd!.size.height.toDouble(),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 196, 193, 193),
-                        border: Border(
-                          top: BorderSide(
-                            color: const Color.fromARGB(255, 185, 181, 181),
-                          ),
+                  Container(
+                    width: _bannerAd!.size.width.toDouble(),
+                    height: _bannerAd!.size.height.toDouble(),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 196, 193, 193),
+                      border: Border(
+                        top: BorderSide(
+                          color: const Color.fromARGB(255, 185, 181, 181),
                         ),
                       ),
-                      child: AdWidget(ad: _bannerAd!),
                     ),
+                    child: AdWidget(ad: _bannerAd!),
                   ),
               ],
             ),
           ),
+
+// Botão flutuante
+          Positioned(
+            top: screenHeight * 0.001,
+            right: screenWidth * 0.02,
+            child: CustomIconButton(
+              imageName: isPlayerOCPU ? 'player_vs_cpu.png' : 'player_vs_player.png',
+              width: screenWidth * 0.12, // Ajuste do tamanho do botão
+              isGameRunning: isGameRunning,
+              onPressed: isGameRunning
+                  ? () {} // Botão desabilitado quando o jogo está em execução
+                  : () {
+                      setState(() {
+                        isPlayerOCPU = !isPlayerOCPU;
+                        if (isPlayerOCPU) {
+                          _gameLogic.setPlayerOasCPU();
+                        } else {
+                          _gameLogic.setPlayerOasHuman();
+                        }
+                      });
+                    },
+            ),
+          ),
+
+
+
         ],
       ),
     );
   }
+
+
+
+
+
 
 }

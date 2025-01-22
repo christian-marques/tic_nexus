@@ -9,7 +9,7 @@ class TutorialOverlay extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-      color: const Color.fromARGB(132, 0, 0, 0), // Fundo translúcido
+      color: const Color.fromARGB(104, 148, 15, 182), // Fundo translúcido
       child: Center(
         child: SingleChildScrollView( // Adicionado para permitir rolagem
           child: Stack(
@@ -54,20 +54,50 @@ class TutorialOverlay extends StatelessWidget {
                     ),
                     SizedBox(height: screenHeight * 0.03),
                     // Corpo do tutorial
-                    Text(
-                      """
-Nesse jogo você desenvolve suas habilidades de lógica de uma maneira diferenciada e nostálgica: jogando a nova versão do jogo da velha.
-Primeiro, escolha os nomes de quem vai ser o 'X' e o 'O' e, após, é só apertar em 'Start' e começar a jogar.
-Caso deseje finalizar a partida, clique em 'Reset' para apagar o nome dos jogadores, limpar o tabuleiro e zerar o placar.
-Bom jogo!
-
-Sds, cmos.""",
+                    RichText(
                       textAlign: TextAlign.justify,
-                      style: TextStyle(
-                        fontSize: screenWidth * 0.04,
-                        color: Colors.black54,
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.037,
+                          color: Colors.black54,
+                          height: 1.0, // Espaçamento entre linhas
+                        ),
+                        children: [
+                          // Parágrafo inicial com recuo na primeira linha
+                          TextSpan(
+                            text: "Neste jogo, você pode aprimorar suas habilidades de lógica de maneira divertida e nostálgica com uma nova versão do clássico jogo da velha.\n\n",
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.037,
+                              color: Colors.black54,
+                              height: 1.0,
+                            ),
+                            recognizer: null,
+                          ),
+                          // Tópicos
+                          TextSpan(
+                            text: "• Para começar, escolha os nomes dos jogadores que representarão o 'X' e o 'O'.\n\n",
+                          ),
+                          TextSpan(
+                            text: "• Em seguida, clique em 'Start' para iniciar a partida.\n\n",
+                          ),
+                          TextSpan(
+                            text: "• Caso queira reiniciar, clique em 'Reset' para redefinir os nomes, limpar o tabuleiro e zerar o placar.\n\n",
+                          ),
+                          TextSpan(
+                            text: "• Você também pode alternar entre o modo jogador contra jogador ou jogador contra a máquina clicando no botão no canto superior direito.\n\n",
+                          ),
+                          // Encerramento
+                          TextSpan(
+                            text: "Divirta-se e aproveite a experiência!\n",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          TextSpan(
+                            text: "Atenciosamente,\ncmos.",
+                          ),
+                        ],
                       ),
                     ),
+
                   ],
                 ),
               ),

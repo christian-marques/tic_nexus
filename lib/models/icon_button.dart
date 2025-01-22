@@ -15,10 +15,13 @@ class CustomIconButton extends StatelessWidget {
   });
 
   double _buttonOpacity() {
+    const double hideOpacity = 0.2; 
     if (imageName == 'start.png') {
-      return isGameRunning ? 0.2 : 1.0;
+      return isGameRunning ? hideOpacity : 1.0;
     } else if (imageName == 'reset.png') {
-      return isGameRunning ? 1.0 : 0.2;
+      return isGameRunning ? 1.0 : hideOpacity;
+    } else if (isGameRunning && ((imageName == 'player_vs_player.png') || (imageName == 'player_vs_cpu.png'))){
+      return hideOpacity;
     }
     return 1.0;
   }

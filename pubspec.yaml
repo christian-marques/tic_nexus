@@ -64,6 +64,8 @@ flutter:
     - assets/images/start.png
     - assets/images/reset.png
     - assets/images/adsense.png
+    - assets/images/player_vs_player.png
+    - assets/images/player_vs_cpu.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

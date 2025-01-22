@@ -73,7 +73,7 @@ class PlayerSection extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: screenWidth * 0.02),
+      padding: EdgeInsets.only(bottom: screenWidth * 0.03),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
