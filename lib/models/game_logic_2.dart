@@ -1,0 +1,189 @@
+import 'dart:developer' as developer;
+import 'package:flutter/material.dart';
+import 'dart:math';
+
+class GameLogic2 {
+  final List<List<String>> _miniBoards = List.generate(9, (_) => List.generate(9, (_) => ''));
+  final List<String> _mainBoard = List.generate(9, (_) => '');
+  // final CPUPlayer _cpuPlayer = CPUPlayer();
+
+  String _currentPlayer = 'X';
+  int? _nextMiniBoard;
+  bool _isGameRunning = false;
+  bool _isPlayerOCPU = false;
+  bool _isProcessing = false;
+
+  VoidCallback? _onStateChanged;
+  Function(String)? onWinnerDeclared;
+
+  // Configura o estado do jogo como iniciado
+  void startGame() {
+    _isGameRunning = true;
+    developer.log("Jogo 2.0 iniciado", name: "GAME_LOGIC_2");
+  }
+
+  // Configura o estado do jogo como finalizado
+  void finishGame() {
+    _isGameRunning = false;
+    developer.log("Jogo 2.0 finalizado", name: "GAME_LOGIC_2");
+  }
+
+  // Verifica se o jogo está em andamento
+  bool isGameRunning() => _isGameRunning;
+
+  // Define o Jogador O como CPU
+  void setPlayerOasCPU() {
+    _isPlayerOCPU = true;
+  }
+
+  // Define o Jogador O como humano
+  void setPlayerOasHuman() {
+    _isPlayerOCPU = false;
+  }
+
+  // Configura o callback para mudanças de estado
+  void setOnStateChanged(VoidCallback callback) {
+    _onStateChanged = callback;
+  }
+
+  // Configura o callback para notificações de vitória ou empate
+  void setOnWinnerDeclared(Function(String) callback) {
+    onWinnerDeclared = callback;
+  }
+
+  // Retorna o estado de uma célula específica de um mini tabuleiro
+  String getMiniCellState(int boardIndex, int cellIndex) {
+    return _miniBoards[boardIndex][cellIndex];
+  }
+
+  // Reseta o tabuleiro para um novo jogo
+  void resetBoard() {
+    for (var i = 0; i < 9; i++) {
+      _miniBoards[i] = List.generate(9, (_) => '');
+      _mainBoard[i] = '';
+    }
+    _nextMiniBoard = null;
+    _currentPlayer = 'X';
+    _isProcessing = false;
+    _isGameRunning = false;
+    _onStateChanged?.call();
+    developer.log("Tabuleiros resetados", name: "GAME_LOGIC_2");
+  }
+
+  // Lógica de movimento
+  void makeMove(int boardIndex, int cellIndex) {
+    if (_isProcessing) {
+      developer.log("Jogada em processamento. Aguarde!", name: "GAME_LOGIC_2");
+      return;
+    }
+
+    if (!_isGameRunning) {
+      developer.log("Tentativa de jogar sem iniciar o jogo", name: "GAME_LOGIC_2");
+      return;
+    }
+
+    if (_miniBoards[boardIndex][cellIndex] != '' || !_isMiniBoardAvailable(boardIndex)) {
+      developer.log("Movimento inválido no tabuleiro $boardIndex, célula $cellIndex", name: "GAME_LOGIC_2");
+      return;
+    }
+
+    _miniBoards[boardIndex][cellIndex] = _currentPlayer;
+
+    if (_checkMiniBoardVictory(boardIndex)) {
+      _mainBoard[boardIndex] = _currentPlayer;
+      if (_checkMainBoardVictory()) {
+        finishGame();
+        onWinnerDeclared?.call(_currentPlayer);
+        return;
+      }
+    } else if (_checkMiniBoardDraw(boardIndex)) {
+      _mainBoard[boardIndex] = '-';
+    }
+
+    _nextMiniBoard = cellIndex;
+    _currentPlayer = _currentPlayer == 'X' ? 'O' : 'X';
+
+    if (_currentPlayer == 'O' && _isPlayerOCPU) {
+      _isProcessing = true;
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _cpuMove();
+        _isProcessing = false;
+      });
+    }
+
+    _onStateChanged?.call();
+  }
+
+  // Movimento automático da CPU
+  void _cpuMove() {
+    List<int> availableBoards = getAvailableMiniBoards();
+    if (availableBoards.isEmpty) return;
+
+    int boardIndex = availableBoards[Random().nextInt(availableBoards.length)];
+    List<int> availableCells = [];
+    for (int i = 0; i < 9; i++) {
+      if (_miniBoards[boardIndex][i] == '') {
+        availableCells.add(i);
+      }
+    }
+
+    if (availableCells.isNotEmpty) {
+      int cellIndex = availableCells[Random().nextInt(availableCells.length)];
+      makeMove(boardIndex, cellIndex);
+    }
+  }
+
+  // Verifica se o mini tabuleiro está disponível
+  bool _isMiniBoardAvailable(int boardIndex) {
+    return getAvailableMiniBoards().contains(boardIndex);
+  }
+
+  // Retorna os índices dos mini tabuleiros disponíveis para jogar
+  List<int> getAvailableMiniBoards() {
+    if (_nextMiniBoard == null || _mainBoard[_nextMiniBoard!] != '') {
+      return List.generate(9, (index) => index).where((i) => _mainBoard[i] == '').toList();
+    }
+    return [_nextMiniBoard!];
+  }
+
+  // Verifica vitória em um mini tabuleiro
+  bool _checkMiniBoardVictory(int boardIndex) {
+    const winPatterns = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6],
+    ];
+
+    for (var pattern in winPatterns) {
+      if (_miniBoards[boardIndex][pattern[0]] != '' &&
+          _miniBoards[boardIndex][pattern[0]] == _miniBoards[boardIndex][pattern[1]] &&
+          _miniBoards[boardIndex][pattern[1]] == _miniBoards[boardIndex][pattern[2]]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Verifica empate em um mini tabuleiro
+  bool _checkMiniBoardDraw(int boardIndex) {
+    return _miniBoards[boardIndex].every((cell) => cell != '') && !_checkMiniBoardVictory(boardIndex);
+  }
+
+  // Verifica vitória no tabuleiro principal
+  bool _checkMainBoardVictory() {
+    const winPatterns = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6],
+    ];
+
+    for (var pattern in winPatterns) {
+      if (_mainBoard[pattern[0]] != '' &&
+          _mainBoard[pattern[0]] == _mainBoard[pattern[1]] &&
+          _mainBoard[pattern[1]] == _mainBoard[pattern[2]]) {
+        return true;
+      }
+    }
+    return false;
+  }
+}

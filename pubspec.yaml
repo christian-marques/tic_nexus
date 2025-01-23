@@ -68,6 +68,8 @@ flutter:
     - assets/images/adsense.png
     - assets/images/player_vs_player.png
     - assets/images/player_vs_cpu.png
+    - assets/images/game_1.0.png
+    - assets/images/game_2.0.png
 
 flutter_icons:
   android: true

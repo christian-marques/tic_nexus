@@ -1,6 +1,8 @@
 import 'package:tic_nexus/models/ad_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:tic_nexus/models/dialog_screen.dart';
+import 'package:tic_nexus/models/game_logic_2.dart';
+import 'package:tic_nexus/models/game_table_2.dart';
 import 'package:tic_nexus/models/icon_button.dart';
 import 'package:tic_nexus/models/score_board.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -18,6 +20,7 @@ class GamePage extends StatefulWidget {
 class _GamePageState extends State<GamePage> {
   final AdHelper _adHelper = AdHelper();
   final GameLogic _gameLogic = GameLogic();
+  final GameLogic2 _gameLogic2 = GameLogic2();
   BannerAd? _bannerAd;
 
   static int scoreX = 0;
@@ -27,8 +30,9 @@ class _GamePageState extends State<GamePage> {
   bool isEditingNames = true;
   bool isWaitingGameStart = true;
   bool isPlayerOCPU = false; // Inicialmente como Player vs Player
+  bool isGameModeTwo = false; // Define o modo inicial como 1.0
 
-  bool get isGameRunning => _gameLogic.isGameRunning();
+  bool get isGameRunning => isGameModeTwo ? _gameLogic2.isGameRunning() : _gameLogic.isGameRunning();
 
   @override
   void initState() {
@@ -59,6 +63,19 @@ class _GamePageState extends State<GamePage> {
       });
       _showWinnerDialog(winnerSymbol, winnerName);
     };
+    
+
+    _gameLogic2.onWinnerDeclared = (winnerSymbol) {
+      String winnerName = winnerSymbol == "X" ? controllerX.text : controllerO.text;
+      setState(() {
+        if (winnerSymbol == "X") {
+          scoreX++;
+        } else if (winnerSymbol == "O") {
+          scoreO++;
+        }
+      });
+      _showWinnerDialog(winnerSymbol, winnerName);
+    };
   }
 
   @override
@@ -72,7 +89,11 @@ class _GamePageState extends State<GamePage> {
   void _startGame() {
     if (!isGameRunning){
       setState(() {
-        _gameLogic.startGame();
+        if (isGameModeTwo) {
+          _gameLogic2.startGame();
+        } else {
+          _gameLogic.startGame();
+        }
         isEditingNames = false;
         isWaitingGameStart = false;
       });
@@ -81,8 +102,13 @@ class _GamePageState extends State<GamePage> {
 
   void _resetGame() {
     setState(() {
-      _gameLogic.resetBoard();
-      _gameLogic.finishGame();
+      if (isGameModeTwo) {
+        _gameLogic2.resetBoard();
+        _gameLogic2.finishGame();
+      } else {
+        _gameLogic.resetBoard();
+        _gameLogic.finishGame();
+      }
       isEditingNames = true;
       isWaitingGameStart = true;
       scoreX = 0;
@@ -126,8 +152,13 @@ class _GamePageState extends State<GamePage> {
       body: body,
       onConfirmed: (){
         _adHelper.showInterstitialAd();
-        _gameLogic.resetBoard(); // Reinicia o tabuleiro
-        _gameLogic.startGame();  // Recomeça o jogo automaticamente
+        if (isGameModeTwo) {
+          _gameLogic2.resetBoard(); // Reinicia o tabuleiro
+          _gameLogic2.startGame();  // Recomeça o jogo automaticament
+        } else {
+          _gameLogic.resetBoard(); // Reinicia o tabuleiro
+          _gameLogic.startGame();  // Recomeça o jogo automaticamente
+        }
         setState(() {
           isEditingNames = false;
         });
@@ -197,7 +228,10 @@ class _GamePageState extends State<GamePage> {
                   height: screenHeight * 0.47,
                   child: Stack(
                     children: [
-                      GameTable(gameLogic: _gameLogic),
+                      if (isGameModeTwo)
+                        GameTable2(gameLogic2: _gameLogic2) // Tabuleiro do modo 2.0
+                      else
+                        GameTable(gameLogic: _gameLogic), // Tabuleiro do modo 1.0
                       if (isWaitingGameStart)
                         const TutorialOverlay(),
                     ],
@@ -254,7 +288,7 @@ class _GamePageState extends State<GamePage> {
             ),
           ),
 
-// Botão flutuante
+          // Botão flutuante para alternar tipo de adversário
           Positioned(
             top: screenHeight * 0.001,
             right: screenWidth * 0.02,
@@ -270,9 +304,11 @@ class _GamePageState extends State<GamePage> {
                         if (isPlayerOCPU) {
                           controllerO.text = "CPU";
                           _gameLogic.setPlayerOasCPU();
+                          _gameLogic2.setPlayerOasCPU();
                         } else {
                           controllerO.text = "Jogador O";
                           _gameLogic.setPlayerOasHuman();
+                          _gameLogic2.setPlayerOasHuman();
                         }
                       });
                     },
@@ -281,14 +317,27 @@ class _GamePageState extends State<GamePage> {
 
 
 
+          // Botão flutuante para alternar modos
+          Positioned(
+            top: screenHeight * 0.001,
+            left: screenWidth * 0.02,
+            child: CustomIconButton(
+              imageName: isGameModeTwo ? 'game_2.0.png' : 'game_1.0.png',
+              width: screenWidth * 0.12, // Ajuste do tamanho do botão
+              isGameRunning: isGameRunning,
+              onPressed: isGameRunning
+                  ? () {} // Botão desabilitado quando o jogo está em execução
+                  : () {
+                      setState(() {
+                        isGameModeTwo = !isGameModeTwo;
+                      });
+                    },
+            ),
+          ),
+
+
         ],
       ),
     );
   }
-
-
-
-
-
-
 }
