@@ -58,6 +58,11 @@ class GameLogic2 {
     return _miniBoards[boardIndex][cellIndex];
   }
 
+  // Retorna o estado do mini tabuleiro no tabuleiro principal
+  String getMainBoardState(int boardIndex) {
+    return _mainBoard[boardIndex];
+  }
+
   // Reseta o tabuleiro para um novo jogo
   void resetBoard() {
     for (var i = 0; i < 9; i++) {
@@ -92,15 +97,19 @@ class GameLogic2 {
     _miniBoards[boardIndex][cellIndex] = _currentPlayer;
 
     if (_checkMiniBoardVictory(boardIndex)) {
-      _mainBoard[boardIndex] = _currentPlayer;
       if (_checkMainBoardVictory()) {
         finishGame();
-        onWinnerDeclared?.call(_currentPlayer);
+        onWinnerDeclared?.call(_currentPlayer); // Declara vencedor
         return;
       }
     } else if (_checkMiniBoardDraw(boardIndex)) {
-      _mainBoard[boardIndex] = '-';
+      if (_checkMainBoardVictory()) {
+        finishGame();
+        onWinnerDeclared?.call('-'); // Declara empate no tabuleiro principal
+        return;
+      }
     }
+
 
     _nextMiniBoard = cellIndex;
     _currentPlayer = _currentPlayer == 'X' ? 'O' : 'X';
@@ -134,12 +143,12 @@ class GameLogic2 {
         availableCells.add(i);
       }
     }
-    developer.log("Células dispiníveis: '$availableCells'", name: "GAME_LOGIC_2");
 
     if (availableCells.isNotEmpty) {
       int cellIndex = availableCells[Random().nextInt(availableCells.length)];
       Future.delayed(const Duration(milliseconds: 500), () {
         if (_isGameRunning && _isPlayerOCPU) {
+          developer.log("Células dispiníveis: '$availableCells' | Célula escolhida: '$cellIndex'", name: "GAME_LOGIC_2");
           makeMove(boardIndex, cellIndex);
         }
         _isProcessing = false; // Libera o estado após a jogada
@@ -173,6 +182,8 @@ class GameLogic2 {
       if (_miniBoards[boardIndex][pattern[0]] != '' &&
           _miniBoards[boardIndex][pattern[0]] == _miniBoards[boardIndex][pattern[1]] &&
           _miniBoards[boardIndex][pattern[1]] == _miniBoards[boardIndex][pattern[2]]) {
+        _mainBoard[boardIndex] = _miniBoards[boardIndex][pattern[0]];
+        developer.log("[Vitória] Icone de finalização do mini tabuleiro: '${_mainBoard[boardIndex]}'", name: "GAME_LOGIC_2");
         return true;
       }
     }
@@ -181,7 +192,13 @@ class GameLogic2 {
 
   // Verifica empate em um mini tabuleiro
   bool _checkMiniBoardDraw(int boardIndex) {
-    return _miniBoards[boardIndex].every((cell) => cell != '') && !_checkMiniBoardVictory(boardIndex);
+    if (_miniBoards[boardIndex].every((cell) => cell != '') && !_checkMiniBoardVictory(boardIndex)) {
+      // Atualiza o estado no tabuleiro principal como empate
+      _mainBoard[boardIndex] = '-';
+      developer.log("[Empate] Icone de finalização do mini tabuleiro: '${_mainBoard[boardIndex]}'", name: "GAME_LOGIC_2");
+      return true;
+    }
+    return false;
   }
 
   // Verifica vitória no tabuleiro principal

@@ -32,6 +32,7 @@ class _GameTable2State extends State<GameTable2> {
           children: List.generate(3, (col) {
             final boardIndex = row * 3 + col; // Índice do mini tabuleiro
             final isAvailable = widget.gameLogic2.getAvailableMiniBoards().contains(boardIndex);
+            final mainBoardState = widget.gameLogic2.getMainBoardState(boardIndex); // MOVIDO PARA FORA
 
             return Container(
               width: cellSize * 3,
@@ -41,48 +42,74 @@ class _GameTable2State extends State<GameTable2> {
                 color: isAvailable ? Colors.blue.shade100 : Colors.grey.shade300,
                 border: Border.all(color: Colors.black, width: 1.0),
               ),
-              child: GridView.builder(
-                physics: const NeverScrollableScrollPhysics(), // Evita rolagem dentro dos mini tabuleiros
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, // 3x3 células em cada mini tabuleiro
-                  crossAxisSpacing: 1.0,
-                  mainAxisSpacing: 1.0,
-                ),
-                itemCount: 9,
-                itemBuilder: (context, cellIndex) {
-                  final cellState = widget.gameLogic2.getMiniCellState(boardIndex, cellIndex);
+              child: Stack(
+                children: [
+                  // Mini tabuleiro (células)
+                  GridView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3, // 3x3 células em cada mini tabuleiro
+                      crossAxisSpacing: 1.0,
+                      mainAxisSpacing: 1.0,
+                    ),
+                    itemCount: 9,
+                    itemBuilder: (context, cellIndex) {
+                      final cellState = widget.gameLogic2.getMiniCellState(boardIndex, cellIndex);
 
-                  return GestureDetector(
-                    onTap: isAvailable
-                        ? () {
-                            widget.gameLogic2.makeMove(boardIndex, cellIndex);
-                          }
-                        : null, // Bloqueia interações em mini tabuleiros não disponíveis
-                    child: Container(
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: cellState == 'X'
-                            ? Colors.red.shade100
-                            : cellState == 'O'
-                                ? Colors.blue.shade100
-                                : Colors.white,
-                        border: Border.all(color: Colors.black, width: 0.5),
-                      ),
-                      child: Text(
-                        cellState,
-                        style: TextStyle(
-                          fontSize: cellSize * 0.6,
-                          fontWeight: FontWeight.bold,
-                          color: cellState == 'X'
-                              ? Colors.red
-                              : cellState == 'O'
-                                  ? Colors.blue
-                                  : Colors.black,
+                      return GestureDetector(
+                        onTap: isAvailable
+                            ? () {
+                                widget.gameLogic2.makeMove(boardIndex, cellIndex);
+                              }
+                            : null, // Bloqueia interações em mini tabuleiros não disponíveis
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: cellState == 'X'
+                                ? Colors.red.shade100
+                                : cellState == 'O'
+                                    ? Colors.blue.shade100
+                                    : Colors.white,
+                            border: Border.all(color: Colors.black, width: 0.5),
+                          ),
+                          child: Text(
+                            cellState,
+                            style: TextStyle(
+                              fontSize: cellSize * 0.6,
+                              fontWeight: FontWeight.bold,
+                              color: cellState == 'X'
+                                  ? Colors.red
+                                  : cellState == 'O'
+                                      ? Colors.blue
+                                      : Colors.black,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  // Sobreposição do mini tabuleiro
+                  if (mainBoardState != '') // Verifica se o mini tabuleiro foi finalizado
+                    Positioned.fill(
+                      child: Container(
+                        color: Colors.white,
+                        child: Icon(
+                          mainBoardState == '-'
+                              ? Icons.remove // Ícone de empate
+                              : mainBoardState == 'X'
+                                  ? Icons.close // Ícone de vitória do X
+                                  : Icons.circle_outlined, // Ícone de vitória do O
+                          size: cellSize * 2.5, // Ícone grande
+                          color: mainBoardState == '-'
+                              ? Colors.grey // Ícone cinza para empate
+                              : mainBoardState == 'X'
+                                  ? Colors.red // Ícone vermelho para X
+                                  : Colors.blue, // Ícone azul para O
                         ),
                       ),
                     ),
-                  );
-                },
+                ],
               ),
             );
           }),
