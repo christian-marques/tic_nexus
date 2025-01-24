@@ -33,11 +33,13 @@ class GameLogic2 {
 
   // Define o Jogador O como CPU
   void setPlayerOasCPU() {
+    developer.log("setPlayerOasCPU", name: "GAME_LOGIC_2");
     _isPlayerOCPU = true;
   }
 
   // Define o Jogador O como humano
   void setPlayerOasHuman() {
+    developer.log("setPlayerOasHuman", name: "GAME_LOGIC_2");
     _isPlayerOCPU = false;
   }
 
@@ -72,7 +74,7 @@ class GameLogic2 {
 
   // Lógica de movimento
   void makeMove(int boardIndex, int cellIndex) {
-    if (_isProcessing) {
+    if (_isProcessing && !_isPlayerOCPU) {
       developer.log("Jogada em processamento. Aguarde!", name: "GAME_LOGIC_2");
       return;
     }
@@ -104,34 +106,47 @@ class GameLogic2 {
     _currentPlayer = _currentPlayer == 'X' ? 'O' : 'X';
 
     if (_currentPlayer == 'O' && _isPlayerOCPU) {
-      _isProcessing = true;
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _cpuMove();
-        _isProcessing = false;
-      });
+      developer.log("Vai entrar no CPU", name: "GAME_LOGIC_2");
+      _cpuMove();
+      _isProcessing = true; // Bloqueia novas jogadas enquanto a CPU processa
     }
 
     _onStateChanged?.call();
   }
 
-  // Movimento automático da CPU
+
+
   void _cpuMove() {
+    if (!_isGameRunning || !_isPlayerOCPU) return;
+
     List<int> availableBoards = getAvailableMiniBoards();
     if (availableBoards.isEmpty) return;
 
+    // Seleciona um mini tabuleiro aleatório entre os disponíveis
     int boardIndex = availableBoards[Random().nextInt(availableBoards.length)];
+
+    developer.log("Tabuleiros dispiníveis: '$availableBoards' | Tabuleiro escolhido: '$boardIndex'", name: "GAME_LOGIC_2");
+
+    // Seleciona uma célula aleatória dentro do mini tabuleiro escolhido
     List<int> availableCells = [];
     for (int i = 0; i < 9; i++) {
       if (_miniBoards[boardIndex][i] == '') {
         availableCells.add(i);
       }
     }
+    developer.log("Células dispiníveis: '$availableCells'", name: "GAME_LOGIC_2");
 
     if (availableCells.isNotEmpty) {
       int cellIndex = availableCells[Random().nextInt(availableCells.length)];
-      makeMove(boardIndex, cellIndex);
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (_isGameRunning && _isPlayerOCPU) {
+          makeMove(boardIndex, cellIndex);
+        }
+        _isProcessing = false; // Libera o estado após a jogada
+      });
     }
   }
+
 
   // Verifica se o mini tabuleiro está disponível
   bool _isMiniBoardAvailable(int boardIndex) {
