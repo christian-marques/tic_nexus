@@ -41,8 +41,8 @@ class _GameTable2State extends State<GameTable2> {
               decoration: BoxDecoration(
                 color: isAvailable
                     ? (widget.gameLogic2.getCurrentPlayer() == 'X'
-                        ? const Color.fromARGB(150, 244, 67, 54) // Cor vermelha com opacidade para "X"
-                        : const Color.fromARGB(150, 33, 149, 243)) // Cor azul com opacidade para "O"
+                        ? const Color.fromARGB(50, 244, 67, 54) // Cor vermelha com opacidade para "X"
+                        : const Color.fromARGB(50, 33, 149, 243)) // Cor azul com opacidade para "O"
                     : Colors.grey.shade300, // Cor para tabuleiros indisponíveis
                 border: Border.all(
                   color: isAvailable
@@ -55,6 +55,7 @@ class _GameTable2State extends State<GameTable2> {
               ),
               child: Stack(
                 children: [
+
                   // Mini tabuleiro (células)
                   GridView.builder(
                     physics: const NeverScrollableScrollPhysics(),
@@ -77,7 +78,7 @@ class _GameTable2State extends State<GameTable2> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            border: Border.all(color: Colors.black, width: 0.5),
+                            border: Border.all(color: Colors.black, width: 0.01),
                           ),
                           child: Text(
                             cellState,
@@ -96,7 +97,20 @@ class _GameTable2State extends State<GameTable2> {
                     },
                   ),
 
-                  // Sobreposição do mini tabuleiro
+                  // Camada translúcida para o próximo jogador (fica na frente das células)
+                  if (isAvailable)
+                    Positioned.fill(
+                      child: IgnorePointer( // Permite cliques passarem para as células
+                        ignoring: true,
+                        child: Container(
+                          color: widget.gameLogic2.getCurrentPlayer() == 'X'
+                            ? const Color.fromARGB(45, 253, 0, 0) // Camada vermelha translúcida para X
+                            : const Color.fromARGB(80, 2, 141, 255), // Camada azul translúcida para O
+                        ),
+                      ),
+                    ),
+
+                  // Sobreposição do mini tabuleiro quando finalizado
                   if (mainBoardState != '') // Verifica se o mini tabuleiro foi finalizado
                     Positioned.fill(
                       child: Container(
@@ -116,9 +130,14 @@ class _GameTable2State extends State<GameTable2> {
                         ),
                       ),
                     ),
+
                 ],
               ),
             );
+
+
+
+            
           }),
         );
       }),
