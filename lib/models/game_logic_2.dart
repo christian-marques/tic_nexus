@@ -105,11 +105,19 @@ class GameLogic2 {
         finishGame();
         onWinnerDeclared?.call(_currentPlayer); // Declara vencedor
         return;
+      } else if (_checkMainBoardDraw()) {
+        finishGame();
+        onWinnerDeclared?.call('-'); // Notifica empate.
+        return;
       }
     } else if (_checkMiniBoardDraw(boardIndex)) {
       if (_checkMainBoardVictory()) {
         finishGame();
         onWinnerDeclared?.call('-'); // Declara empate no tabuleiro principal
+        return;
+      } else if (_checkMainBoardDraw()) {
+        finishGame();
+        onWinnerDeclared?.call('-'); // Notifica empate.
         return;
       }
     }
@@ -124,6 +132,7 @@ class GameLogic2 {
       _isProcessing = true; // Bloqueia novas jogadas enquanto a CPU processa
     }
 
+    
     _onStateChanged?.call();
   }
 
@@ -204,6 +213,19 @@ class GameLogic2 {
     }
     return false;
   }
+
+
+  // Verifica empate no tabuleiro principal
+  bool _checkMainBoardDraw() {
+    List<int> availableBoards = getAvailableMiniBoards();
+    developer.log("[Empate total] Mini tabuleiros disponíveis: '$availableBoards'", name: "GAME_LOGIC_2");
+    if (availableBoards.isEmpty){
+      developer.log("[Empate total] Jogo principal empatou: ", name: "GAME_LOGIC_2");
+      return true;
+    }
+    return false;
+  }
+
 
   // Verifica vitória no tabuleiro principal
   bool _checkMainBoardVictory() {
