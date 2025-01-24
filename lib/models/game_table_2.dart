@@ -39,8 +39,19 @@ class _GameTable2State extends State<GameTable2> {
               height: cellSize * 3,
               margin: const EdgeInsets.all(4.0),
               decoration: BoxDecoration(
-                color: isAvailable ? Colors.blue.shade100 : Colors.grey.shade300,
-                border: Border.all(color: Colors.black, width: 1.0),
+                color: isAvailable
+                    ? (widget.gameLogic2.getCurrentPlayer() == 'X'
+                        ? const Color.fromARGB(150, 244, 67, 54) // Cor vermelha com opacidade para "X"
+                        : const Color.fromARGB(150, 33, 149, 243)) // Cor azul com opacidade para "O"
+                    : Colors.grey.shade300, // Cor para tabuleiros indisponíveis
+                border: Border.all(
+                  color: isAvailable
+                    ? (widget.gameLogic2.getCurrentPlayer() == 'X'
+                        ? const Color.fromARGB(150, 244, 67, 54) // Cor vermelha com opacidade para "X"
+                        : const Color.fromARGB(150, 33, 149, 243)) // Cor azul com opacidade para "O"
+                    : Colors.grey.shade300, // Cor para tabuleiros indisponíveis
+                  width: isAvailable ? 1.8 : 1.0,
+                ),
               ),
               child: Stack(
                 children: [

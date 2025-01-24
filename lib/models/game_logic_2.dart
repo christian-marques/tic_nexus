@@ -63,6 +63,10 @@ class GameLogic2 {
     return _mainBoard[boardIndex];
   }
 
+  String getCurrentPlayer() {
+    return _currentPlayer;
+  }
+
   // Reseta o tabuleiro para um novo jogo
   void resetBoard() {
     for (var i = 0; i < 9; i++) {
