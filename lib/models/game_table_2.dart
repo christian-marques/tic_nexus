@@ -65,11 +65,7 @@ class _GameTable2State extends State<GameTable2> {
                         child: Container(
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: cellState == 'X'
-                                ? Colors.red.shade100
-                                : cellState == 'O'
-                                    ? Colors.blue.shade100
-                                    : Colors.white,
+                            color: Colors.white,
                             border: Border.all(color: Colors.black, width: 0.5),
                           ),
                           child: Text(

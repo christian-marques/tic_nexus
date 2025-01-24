@@ -22,6 +22,8 @@ class CustomIconButton extends StatelessWidget {
       return isGameRunning ? 1.0 : hideOpacity;
     } else if (isGameRunning && ((imageName == 'player_vs_player.png') || (imageName == 'player_vs_cpu.png'))){
       return hideOpacity;
+    }else if (isGameRunning && ((imageName == 'game_1.0.png') || (imageName == 'game_2.0.png'))){
+      return hideOpacity;
     }
     return 1.0;
   }
