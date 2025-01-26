@@ -11,12 +11,23 @@ class GameTable2 extends StatefulWidget {
 }
 
 class _GameTable2State extends State<GameTable2> {
+  int? lastBoardIndex; // Índice do último tabuleiro clicado
+  int? lastCellIndex; // Índice da última célula clicada
+
   @override
   void initState() {
     super.initState();
+
     widget.gameLogic2.setOnStateChanged(() {
       setState(() {}); // Atualiza a interface ao alterar o estado.
     });
+
+    widget.gameLogic2.onCellPlayed = (boardIndex, cellIndex) {
+      setState(() {
+        lastBoardIndex = boardIndex;
+        lastCellIndex = cellIndex;
+      });
+    };
   }
 
   @override
@@ -78,7 +89,14 @@ class _GameTable2State extends State<GameTable2> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            border: Border.all(color: Colors.black, width: 0.01),
+                            border: Border.all(
+                              color: (lastBoardIndex == boardIndex && lastCellIndex == cellIndex)
+                                  ? (cellState == 'X' ? Colors.red : Colors.blue)
+                                  : Colors.black, // Borda padrão
+                              width: (lastBoardIndex == boardIndex && lastCellIndex == cellIndex)
+                                  ? 1.2 // Borda mais espessa para o destaque
+                                  : 0.1, // Borda padrão
+                            ),
                           ),
                           child: Text(
                             cellState,

@@ -5,7 +5,7 @@ import 'dart:math';
 class GameLogic2 {
   final List<List<String>> _miniBoards = List.generate(9, (_) => List.generate(9, (_) => ''));
   final List<String> _mainBoard = List.generate(9, (_) => '');
-  // final CPUPlayer _cpuPlayer = CPUPlayer();
+  
 
   String _currentPlayer = 'X';
   int? _nextMiniBoard;
@@ -15,6 +15,8 @@ class GameLogic2 {
 
   VoidCallback? _onStateChanged;
   Function(String)? onWinnerDeclared;
+  Function(int boardIndex, int cellIndex)? onCellPlayed;
+
 
   // Configura o estado do jogo como iniciado
   void startGame() {
@@ -100,6 +102,9 @@ class GameLogic2 {
 
     _miniBoards[boardIndex][cellIndex] = _currentPlayer;
 
+    // Chamar callback para notificar a interface
+    onCellPlayed?.call(boardIndex, cellIndex);
+
     if (_checkMiniBoardVictory(boardIndex)) {
       if (_checkMainBoardVictory()) {
         finishGame();
@@ -159,12 +164,19 @@ class GameLogic2 {
 
     if (availableCells.isNotEmpty) {
       int cellIndex = availableCells[Random().nextInt(availableCells.length)];
-      Future.delayed(const Duration(milliseconds: 500), () {
+      Future.delayed(const Duration(milliseconds: 1000), () {
         if (_isGameRunning && _isPlayerOCPU) {
           developer.log("Células dispiníveis: '$availableCells' | Célula escolhida: '$cellIndex'", name: "GAME_LOGIC_2");
+          // Notificar a interface sobre a jogada da CPU
+          onCellPlayed?.call(boardIndex, cellIndex);
           makeMove(boardIndex, cellIndex);
         }
         _isProcessing = false; // Libera o estado após a jogada
+
+        // Adiciona o delay após a execução do bloco acima
+        Future.delayed(const Duration(milliseconds: 500), () {
+          developer.log("Delay adicional após a jogada da CPU.", name: "GAME_LOGIC_2");
+        });
       });
     }
   }
