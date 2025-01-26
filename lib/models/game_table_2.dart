@@ -49,7 +49,9 @@ class _GameTable2State extends State<GameTable2> {
               width: cellSize * 3,
               height: cellSize * 3,
               margin: const EdgeInsets.all(4.0),
+
               decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
                 color: isAvailable
                     ? (widget.gameLogic2.getCurrentPlayer() == 'X'
                         ? const Color.fromARGB(50, 244, 67, 54) // Cor vermelha com opacidade para "X"
@@ -64,9 +66,9 @@ class _GameTable2State extends State<GameTable2> {
                   width: isAvailable ? 1.8 : 1.0,
                 ),
               ),
+
               child: Stack(
                 children: [
-
                   // Mini tabuleiro (células)
                   GridView.builder(
                     physics: const NeverScrollableScrollPhysics(),
@@ -89,10 +91,13 @@ class _GameTable2State extends State<GameTable2> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
                             border: Border.all(
-                              color: (lastBoardIndex == boardIndex && lastCellIndex == cellIndex)
-                                  ? (cellState == 'X' ? Colors.red : Colors.blue)
-                                  : Colors.black, // Borda padrão
+                              color: (widget.gameLogic2.getClickMovimentGame() > 0) ? (
+                                  (lastBoardIndex == boardIndex && lastCellIndex == cellIndex)
+                                    ? (cellState == 'X' ? Colors.red : Colors.blue)
+                                    : Colors.black // Borda padrão
+                                ) : Colors.transparent, // Caso seja o primeiro movimento do jogo não é para ter borda de último movimento
                               width: (lastBoardIndex == boardIndex && lastCellIndex == cellIndex)
                                   ? 1.2 // Borda mais espessa para o destaque
                                   : 0.1, // Borda padrão
@@ -121,9 +126,12 @@ class _GameTable2State extends State<GameTable2> {
                       child: IgnorePointer( // Permite cliques passarem para as células
                         ignoring: true,
                         child: Container(
-                          color: widget.gameLogic2.getCurrentPlayer() == 'X'
-                            ? const Color.fromARGB(45, 253, 0, 0) // Camada vermelha translúcida para X
-                            : const Color.fromARGB(80, 2, 141, 255), // Camada azul translúcida para O
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: widget.gameLogic2.getCurrentPlayer() == 'X'
+                              ? const Color.fromARGB(45, 253, 0, 0) // Camada vermelha translúcida para X
+                              : const Color.fromARGB(80, 2, 141, 255), // Camada azul translúcida para O
+                          ),
                         ),
                       ),
                     ),
@@ -152,10 +160,6 @@ class _GameTable2State extends State<GameTable2> {
                 ],
               ),
             );
-
-
-
-            
           }),
         );
       }),

@@ -5,7 +5,7 @@ import 'dart:math';
 class GameLogic2 {
   final List<List<String>> _miniBoards = List.generate(9, (_) => List.generate(9, (_) => ''));
   final List<String> _mainBoard = List.generate(9, (_) => '');
-  
+  int _clickMovimentGame = 0;
 
   String _currentPlayer = 'X';
   int? _nextMiniBoard;
@@ -69,6 +69,10 @@ class GameLogic2 {
     return _currentPlayer;
   }
 
+  int getClickMovimentGame(){
+    return _clickMovimentGame;
+  }
+
   // Reseta o tabuleiro para um novo jogo
   void resetBoard() {
     for (var i = 0; i < 9; i++) {
@@ -80,6 +84,7 @@ class GameLogic2 {
     _isProcessing = false;
     _isGameRunning = false;
     _onStateChanged?.call();
+    _clickMovimentGame = 0;
     developer.log("Tabuleiros resetados", name: "GAME_LOGIC_2");
   }
 
@@ -105,6 +110,10 @@ class GameLogic2 {
     // Chamar callback para notificar a interface
     onCellPlayed?.call(boardIndex, cellIndex);
 
+    // Incrementa o contador de movimentos no tabuleiro
+    _clickMovimentGame++;
+    developer.log("Clicks: $_clickMovimentGame", name: "GAME_LOGIC_2");
+
     if (_checkMiniBoardVictory(boardIndex)) {
       if (_checkMainBoardVictory()) {
         finishGame();
@@ -127,7 +136,6 @@ class GameLogic2 {
       }
     }
 
-
     _nextMiniBoard = cellIndex;
     _currentPlayer = _currentPlayer == 'X' ? 'O' : 'X';
 
@@ -136,8 +144,6 @@ class GameLogic2 {
       _cpuMove();
       _isProcessing = true; // Bloqueia novas jogadas enquanto a CPU processa
     }
-
-    
     _onStateChanged?.call();
   }
 
