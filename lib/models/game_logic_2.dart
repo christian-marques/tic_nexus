@@ -6,6 +6,7 @@ class GameLogic2 {
   final List<List<String>> _miniBoards = List.generate(9, (_) => List.generate(9, (_) => ''));
   final List<String> _mainBoard = List.generate(9, (_) => '');
   int _clickMovimentGame = 0;
+  var _isStartTimeX = true;
 
   String _currentPlayer = 'X';
   int? _nextMiniBoard;
@@ -80,7 +81,8 @@ class GameLogic2 {
       _mainBoard[i] = '';
     }
     _nextMiniBoard = null;
-    _currentPlayer = 'X';
+    _isStartTimeX = !_isStartTimeX;
+    _currentPlayer = _isStartTimeX ? 'X' : 'O';
     _isProcessing = false;
     _isGameRunning = false;
     _onStateChanged?.call();

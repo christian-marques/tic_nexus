@@ -8,6 +8,7 @@ class GameLogic {
   static bool _isGameRunning = false;
   static bool _isCpuPlayer = false;
   static bool _isProcessing = false; // Indica se uma jogada está sendo processada
+  var _isStartTimeX = true;
 
 
   // Controle do jogador atual (X ou O).
@@ -170,7 +171,8 @@ class GameLogic {
     for (int i = 0; i < _board.length; i++) {
       _board[i] = '';
     }
-    _currentPlayer = 'X';
+    _isStartTimeX = !_isStartTimeX;
+    _currentPlayer = _isStartTimeX ? 'X' : 'O';
     _isProcessing = false; // Garante que não tem
     log("Tabuleiro resetado", name: "GAME_LOGIC");
   }
