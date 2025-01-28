@@ -24,12 +24,32 @@ class GameLogic {
   void startGame() {
     _isGameRunning = true;
     log("Jogo iniciado", name: "GAME_LOGIC");
+
+    // checkFirstMovimentCPU();
   }
 
   // Configura o estado do jogo como finalizado.
   void finishGame() {
     _isGameRunning = false;
     log("Jogo finalizado", name: "GAME_LOGIC");
+  }
+
+  // Se o jogador inicial for a CPU, faça a jogada imediatamente.
+  void checkFirstMovimentCPU(){
+    log("[Check First Moviment] Jogador atual: $_currentPlayer e jogador: ${isPlayerOCPU()}", name: "GAME_LOGIC");
+    if (_currentPlayer == 'O' && isPlayerOCPU()) {
+      log("entrou O e CPU", name:"GAME_LOGIC");
+      _isProcessing = true; // Bloqueia jogadas enquanto a CPU processa
+      int cpuMove = _cpuPlayer.getNextMove(_board);
+      if (cpuMove != -1) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          _isProcessing = false; // Libera após a jogada
+          onCellTap(cpuMove); // Executa a jogada da CPU
+        });
+      } else {
+        _isProcessing = false; // Libera caso não haja jogadas válidas
+      }
+    }
   }
 
   // Verifica se o jogo está em andamento.
@@ -63,6 +83,8 @@ class GameLogic {
 
   // Método chamado ao clicar em uma célula.
   void onCellTap(int index) {
+    // log("[onCellTap] Jogador atual: $_currentPlayer e jogador: ${isPlayerOCPU()}", name: "GAME_LOGIC");
+    // log("[onCellTap] index: $index | _isGameRunning: $_isGameRunning | _isStartTimeX: $_isStartTimeX", name: "GAME_LOGIC");
     if (_isProcessing) {
       log("Jogada em processamento. Aguarde!", name: "GAME_LOGIC");
       return;
@@ -84,7 +106,9 @@ class GameLogic {
     if (checkVictory()) {
       finishGame();
       onWinnerDeclared?.call(_currentPlayer); // Notifica o jogador vencedor.
-    } else if (checkDraw()) {
+      return;
+    } 
+    if (checkDraw()) {
       finishGame();
       onWinnerDeclared?.call('-'); // Notifica empate.
       return;

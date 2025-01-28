@@ -8,10 +8,10 @@ class GameLogic2 {
   int _clickMovimentGame = 0;
   var _isStartTimeX = true;
 
-  String _currentPlayer = 'X';
   int? _nextMiniBoard;
   bool _isGameRunning = false;
   bool _isPlayerOCPU = false;
+  String _currentPlayer = 'X';
   bool _isProcessing = false;
 
   VoidCallback? _onStateChanged;
@@ -23,12 +23,24 @@ class GameLogic2 {
   void startGame() {
     _isGameRunning = true;
     developer.log("Jogo 2.0 iniciado", name: "GAME_LOGIC_2");
+
+    // checkFirstMovimentCPU();
   }
 
   // Configura o estado do jogo como finalizado
   void finishGame() {
     _isGameRunning = false;
     developer.log("Jogo 2.0 finalizado", name: "GAME_LOGIC_2");
+  }
+
+  // Se o jogador inicial for a CPU, faça a jogada imediatamente.
+  void checkFirstMovimentCPU(){
+    _currentPlayer = _isStartTimeX ? 'X' : 'O';
+    if (_currentPlayer == 'O' && _isPlayerOCPU) {
+      developer.log("Vai entrar no CPU", name: "GAME_LOGIC_2");
+      _cpuMove();
+      _isProcessing = true; // Bloqueia novas jogadas enquanto a CPU processa
+    }
   }
 
   // Verifica se o jogo está em andamento

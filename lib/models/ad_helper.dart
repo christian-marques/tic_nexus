@@ -1,5 +1,7 @@
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:developer';
+import 'package:flutter/foundation.dart';
+
 
 class AdHelper {
   BannerAd? _bannerAd;
@@ -60,13 +62,33 @@ class AdHelper {
     );
   }
 
-  /// Exibir Interstitial Ad
-  void showInterstitialAd() {
+  /// Exibir Interstitial Ad com callback
+  void showInterstitialAd({VoidCallback? onAdClosed}) {
     if (_interstitialAd != null) {
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          log("Interstitial Ad fechado.", name: "DEVELOPER");
+          ad.dispose();
+          _interstitialAd = null; // Limpa o recurso
+          if (onAdClosed != null) {
+            onAdClosed(); // Executa o callback após o fechamento do anúncio
+          }
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          log("Erro ao exibir Interstitial Ad: ${error.message}", name: "DEVELOPER");
+          ad.dispose();
+          _interstitialAd = null; // Limpa o recurso
+          if (onAdClosed != null) {
+            onAdClosed(); // Executa o callback mesmo se o anúncio falhar
+          }
+        },
+      );
       _interstitialAd!.show();
-      _interstitialAd = null; // Limpa após exibir
     } else {
       log("Nenhum Interstitial Ad carregado.", name: "DEVELOPER");
+      if (onAdClosed != null) {
+        onAdClosed(); // Executa o callback caso nenhum anúncio esteja carregado
+      }
     }
   }
 

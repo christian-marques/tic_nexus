@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:tic_nexus/models/ad_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:tic_nexus/models/dialog_screen.dart';
@@ -151,7 +153,8 @@ class _GamePageState extends State<GamePage> {
       title: winnerSymbol == '-' ? "Empate!" : "Parabéns, $winnerName!",
       body: body,
       onConfirmed: (){
-        _adHelper.showInterstitialAd();
+
+        log("Finalização total da rodada", name: "GAME");
         if (isGameModeTwo) {
           _gameLogic2.resetBoard(); // Reinicia o tabuleiro
           _gameLogic2.startGame();  // Recomeça o jogo automaticament
@@ -162,6 +165,20 @@ class _GamePageState extends State<GamePage> {
         setState(() {
           isEditingNames = false;
         });
+
+        log("Mostrando o anúncio...", name: "GAME");
+        _adHelper.showInterstitialAd(
+          onAdClosed: (){
+            log("Anúncio finalizado!", name: "GAME");
+
+            // Iniciando pela CPU precisa chamar primeiro
+            if (isGameModeTwo){
+              _gameLogic2.checkFirstMovimentCPU();
+            } else{
+              _gameLogic.checkFirstMovimentCPU();
+            }
+          } 
+        );
       }
     ).show();
   }
@@ -257,7 +274,9 @@ class _GamePageState extends State<GamePage> {
                         imageName: 'adsense.png',
                         width: screenWidth * 0.16,
                         isGameRunning: isGameRunning,
-                        onPressed: _adHelper.showInterstitialAd,
+                        onPressed: (){
+                          _adHelper.showInterstitialAd(onAdClosed: (){});
+                        },
                       ),
                       CustomIconButton(
                         imageName: 'reset.png',
