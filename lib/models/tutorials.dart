@@ -7,6 +7,9 @@ class TutorialOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
+    double fontSize = 0.035;
+
+    final ScrollController scrollController = ScrollController();
 
     return Container(
       color: const Color.fromARGB(104, 148, 15, 182), // Fundo translúcido
@@ -53,51 +56,94 @@ class TutorialOverlay extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: screenHeight * 0.03),
-                    // Corpo do tutorial
-                    RichText(
-                      textAlign: TextAlign.justify,
-                      text: TextSpan(
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.037,
-                          color: Colors.black54,
-                          height: 1.0, // Espaçamento entre linhas
-                        ),
-                        children: [
-                          // Parágrafo inicial com recuo na primeira linha
-                          TextSpan(
-                            text: "Neste jogo, você pode aprimorar suas habilidades de lógica de maneira divertida e nostálgica com uma nova versão do clássico jogo da velha.\n\n",
+                    
+                    Expanded(
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        child: RichText(
+                          textAlign: TextAlign.justify,
+                          text: TextSpan(
                             style: TextStyle(
                               fontSize: screenWidth * 0.037,
                               color: Colors.black54,
-                              height: 1.0,
+                              height: 1.0, // Espaçamento entre linhas
                             ),
-                            recognizer: null,
+                            children: [
+                              // Parágrafo inicial com recuo na primeira linha
+                              TextSpan(
+                                text: "Neste jogo, você pode aprimorar suas habilidades de lógica de maneira divertida e nostálgica com uma nova versão do clássico jogo da velha.\n\n",
+                                style: TextStyle(
+                                  fontSize: screenWidth * fontSize,
+                                  color: Colors.black54,
+                                  height: 1.0,
+                                ),
+                                recognizer: null,
+                              ),
+                              // Tópicos
+                              TextSpan(
+                                text: "• Para começar, escolha os nomes dos jogadores que representarão o 'X' e o 'O'.\n\n",
+                                style: TextStyle(
+                                  fontSize: screenWidth * fontSize,
+                                  color: Colors.black54,
+                                  height: 1.0,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "• Em seguida, clique em 'Start' para iniciar a partida.\n\n",
+                                style: TextStyle(
+                                  fontSize: screenWidth * fontSize,
+                                  color: Colors.black54,
+                                  height: 1.0,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "• Caso queira reiniciar, clique em 'Reset' para redefinir os nomes, limpar o tabuleiro e zerar o placar.\n\n",
+                                style: TextStyle(
+                                  fontSize: screenWidth * fontSize,
+                                  color: Colors.black54,
+                                  height: 1.0,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "• Você também pode alternar entre o modo jogador contra jogador ou jogador contra a máquina clicando no botão no canto superior direito.\n\n",
+                                style: TextStyle(
+                                  fontSize: screenWidth * fontSize,
+                                  color: Colors.black54,
+                                  height: 1.0,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "• Você também pode alternar entre a versão tradicional do jogo ou a nova clicando no botão no canto superior esquerdo.\n\n",
+                                style: TextStyle(
+                                  fontSize: screenWidth * fontSize,
+                                  color: Colors.black54,
+                                  height: 1.0,
+                                ),
+                              ),
+                              // Encerramento
+                              TextSpan(
+                                text: "Divirta-se e aproveite a experiência!\n",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: screenWidth * fontSize,
+                                  color: Colors.black54,
+                                  height: 1.0,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "Atenciosamente,\ncmos.",
+                                style: TextStyle(
+                                  fontSize: screenWidth * fontSize,
+                                  color: Colors.black54,
+                                  height: 1.0,
+                                ),
+                              ),
+                            ],
                           ),
-                          // Tópicos
-                          TextSpan(
-                            text: "• Para começar, escolha os nomes dos jogadores que representarão o 'X' e o 'O'.\n\n",
-                          ),
-                          TextSpan(
-                            text: "• Em seguida, clique em 'Start' para iniciar a partida.\n\n",
-                          ),
-                          TextSpan(
-                            text: "• Caso queira reiniciar, clique em 'Reset' para redefinir os nomes, limpar o tabuleiro e zerar o placar.\n\n",
-                          ),
-                          TextSpan(
-                            text: "• Você também pode alternar entre o modo jogador contra jogador ou jogador contra a máquina clicando no botão no canto superior direito.\n\n",
-                          ),
-                          // Encerramento
-                          TextSpan(
-                            text: "Divirta-se e aproveite a experiência!\n",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          TextSpan(
-                            text: "Atenciosamente,\ncmos.",
-                          ),
-                        ],
+                        ),
                       ),
                     ),
-
+                      
                   ],
                 ),
               ),
