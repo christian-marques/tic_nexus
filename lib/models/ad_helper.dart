@@ -8,7 +8,9 @@ class AdHelper {
   InterstitialAd? _interstitialAd;
 
   /// IDs de unidade de anúncio
+  // static String get bannerAdUnitId => 'ca-app-pub-4977072153521827/5950469320';
   static String get bannerAdUnitId => 'ca-app-pub-3940256099942544/9214589741'; // Teste
+  // static String get interstitialAdUnitId => 'ca-app-pub-4977072153521827/3901710858';
   static String get interstitialAdUnitId => 'ca-app-pub-3940256099942544/1033173712'; // Teste
 
   /// Carregar Banner Ad
@@ -89,6 +91,7 @@ class AdHelper {
       if (onAdClosed != null) {
         onAdClosed(); // Executa o callback caso nenhum anúncio esteja carregado
       }
+      loadInterstitialAd((_) {}); // Garante que um novo anúncio seja carregado
     }
   }
 

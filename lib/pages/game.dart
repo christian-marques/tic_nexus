@@ -171,6 +171,9 @@ class _GamePageState extends State<GamePage> {
           onAdClosed: (){
             log("Anúncio finalizado!", name: "GAME");
 
+            // Carregar um novo anúncio após o fechamento
+            _adHelper.loadInterstitialAd((_) {});
+
             // Iniciando pela CPU precisa chamar primeiro
             if (isGameModeTwo){
               _gameLogic2.checkFirstMovimentCPU();
