@@ -35,6 +35,10 @@ class GameLogic2 {
 
   // Se o jogador inicial for a CPU, faça a jogada imediatamente.
   void checkFirstMovimentCPU(){
+    _isStartTimeX = !_isStartTimeX;
+    _currentPlayer = _isStartTimeX ? 'X' : 'O';
+    developer.log("[Check First Moviment] _isStartTimeX = $_isStartTimeX| _currentPlayer = $_currentPlayer", name: "GAME_LOGIC_2");
+
     _currentPlayer = _isStartTimeX ? 'X' : 'O';
     if (_currentPlayer == 'O' && _isPlayerOCPU) {
       developer.log("Vai entrar no CPU", name: "GAME_LOGIC_2");
@@ -93,8 +97,6 @@ class GameLogic2 {
       _mainBoard[i] = '';
     }
     _nextMiniBoard = null;
-    _isStartTimeX = !_isStartTimeX;
-    _currentPlayer = _isStartTimeX ? 'X' : 'O';
     _isProcessing = false;
     _isGameRunning = false;
     _onStateChanged?.call();

@@ -36,6 +36,10 @@ class GameLogic {
 
   // Se o jogador inicial for a CPU, faça a jogada imediatamente.
   void checkFirstMovimentCPU(){
+    _isStartTimeX = !_isStartTimeX;
+    _currentPlayer = _isStartTimeX ? 'X' : 'O';
+    log("[Check First Moviment] _isStartTimeX = $_isStartTimeX| _currentPlayer = $_currentPlayer", name: "GAME_LOGIC");
+
     log("[Check First Moviment] Jogador atual: $_currentPlayer e jogador: ${isPlayerOCPU()}", name: "GAME_LOGIC");
     if (_currentPlayer == 'O' && isPlayerOCPU()) {
       log("entrou O e CPU", name:"GAME_LOGIC");
@@ -83,8 +87,8 @@ class GameLogic {
 
   // Método chamado ao clicar em uma célula.
   void onCellTap(int index) {
-    // log("[onCellTap] Jogador atual: $_currentPlayer e jogador: ${isPlayerOCPU()}", name: "GAME_LOGIC");
-    // log("[onCellTap] index: $index | _isGameRunning: $_isGameRunning | _isStartTimeX: $_isStartTimeX", name: "GAME_LOGIC");
+    log("[onCellTap] Jogador atual: $_currentPlayer e jogador: ${isPlayerOCPU()}", name: "GAME_LOGIC");
+    log("[onCellTap] index: $index | _isGameRunning: $_isGameRunning | _isStartTimeX: $_isStartTimeX", name: "GAME_LOGIC");
     if (_isProcessing) {
       log("Jogada em processamento. Aguarde!", name: "GAME_LOGIC");
       return;
@@ -195,8 +199,6 @@ class GameLogic {
     for (int i = 0; i < _board.length; i++) {
       _board[i] = '';
     }
-    _isStartTimeX = !_isStartTimeX;
-    _currentPlayer = _isStartTimeX ? 'X' : 'O';
     _isProcessing = false; // Garante que não tem
     log("Tabuleiro resetado", name: "GAME_LOGIC");
   }
